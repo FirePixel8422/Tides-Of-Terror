@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dissolve
-  m_Shader: {fileID: -6465566751694194690, guid: 2fd8f95a5e77f4941930cdf3a0634319,
+  m_Name: DissolveUI
+  m_Shader: {fileID: -6465566751694194690, guid: a7abcc1559d32eb48be7daa5e53fbeaa,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -118,7 +118,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _Disolve_Active: -1.58
+    - _Disolve_Active: -2.48
     - _Dissolve_Width: 0.124
     - _DstBlend: 0
     - _DstBlendAlpha: 0
@@ -151,10 +151,10 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Base_Color: {r: 0.7412355, g: 0.38420743, b: 0.11048596, a: 1}
+    - _Base_Color: {r: 0.645283, g: 0.334472, b: 0.09618362, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorGlow: {r: 2.9960785, g: 2.9960785, b: 2.9960785, a: 0}
-    - _Edge_Color: {r: 0.58169526, g: 0.25928456, b: 0.06914488, a: 1}
+    - _Edge_Color: {r: 0.4113207, g: 0.18334186, b: 0.048892815, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emission_Color: {r: 1, g: 1, b: 1, a: 0}
     - _NoiseOffset: {r: 0, g: 0, b: 0, a: 0}
