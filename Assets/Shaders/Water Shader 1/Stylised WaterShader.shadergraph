@@ -2086,8 +2086,8 @@
     "m_ObjectId": "1604d239e9274d86ae038bae6f3da546",
     "m_Title": "Texture",
     "m_Position": {
-        "x": -2178.0,
-        "y": -1655.33349609375
+        "x": -2178.000244140625,
+        "y": -1656.0001220703125
     }
 }
 
@@ -3700,7 +3700,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -4575,10 +4575,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1563.33349609375,
-            "y": -531.333251953125,
-            "width": 140.6666259765625,
-            "height": 36.0
+            "x": -1563.0,
+            "y": -531.0,
+            "width": 133.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
@@ -5040,7 +5040,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -5381,10 +5381,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -209.33335876464845,
-            "y": -527.3333129882813,
-            "width": 209.33340454101563,
-            "height": 280.0
+            "x": -213.0,
+            "y": -528.0,
+            "width": 208.0,
+            "height": 278.0
         }
     },
     "m_Slots": [
@@ -6107,7 +6107,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -6363,8 +6363,8 @@
     "m_ObjectId": "a339ef3802a645d7ad61d11fb66c9d72",
     "m_Title": "Foam",
     "m_Position": {
-        "x": -2121.33349609375,
-        "y": -152.66650390625
+        "x": -2121.000244140625,
+        "y": -153.00013732910157
     }
 }
 
@@ -6374,8 +6374,8 @@
     "m_ObjectId": "a39a369b9f0d42efa87d95f704f6fa32",
     "m_Title": "Water Depth Colour",
     "m_Position": {
-        "x": -2077.33349609375,
-        "y": -636.0001831054688
+        "x": -2077.000244140625,
+        "y": -636.0
     }
 }
 
@@ -6930,8 +6930,8 @@
     "m_ObjectId": "ba7100acf02743ae8956f22ada5020b0",
     "m_Title": "Waves",
     "m_Position": {
-        "x": -2265.33349609375,
-        "y": -2748.666748046875
+        "x": -2265.000244140625,
+        "y": -2749.0
     }
 }
 
@@ -7688,7 +7688,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.10000000149011612,
+    "m_Value": 0.009999999776482582,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -7755,8 +7755,8 @@
     "m_ObjectId": "d78b35a010614f8e86a19a58b092ba63",
     "m_Title": "Normals",
     "m_Position": {
-        "x": -1092.0001220703125,
-        "y": -637.9998779296875
+        "x": -1092.000244140625,
+        "y": -638.0
     }
 }
 
