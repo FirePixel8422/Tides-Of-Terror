@@ -1,0 +1,114 @@
+{
+    "name": "ControllerControls",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "cb1108cf-1694-4933-8175-a1b71fd0dbfd",
+            "actions": [
+                {
+                    "name": "leftsectrigger",
+                    "type": "Button",
+                    "id": "d26b1253-748e-40b7-a666-bea1615b7dba",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "rightsectrigger",
+                    "type": "Button",
+                    "id": "85fb0dbb-6451-4859-9850-16fbba3775e3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "lefttriggerheld",
+                    "type": "Value",
+                    "id": "8e9fcbd2-85d2-4e2a-ac6e-0001c4553801",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "righttriggerheld",
+                    "type": "Value",
+                    "id": "eaa1e01b-3402-4cc9-a849-2615f4c7e2ef",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "B",
+                    "type": "Button",
+                    "id": "b1f771c3-b8fe-4911-9ee6-f10ff42ed654",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a7c614d7-25c2-4faf-8d1c-626a228bc1b9",
+                    "path": "<XRController>{LeftHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "leftsectrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "065397cd-b371-4fe4-9bad-1318fa8a15b7",
+                    "path": "<XRController>{RightHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "rightsectrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8e901792-8cc2-4773-b5a1-9a5621c7f58b",
+                    "path": "<XRController>{LeftHand}/{Trigger}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "lefttriggerheld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "04aee182-4d12-4a59-a796-0840a1daa0e8",
+                    "path": "<XRController>{RightHand}/{Trigger}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "righttriggerheld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fabb01e1-e0b6-406b-b427-8230d6ea9624",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "B",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
