@@ -33,7 +33,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: _Foam_amount
+  m_LockedProperties: _Foam_Cutoff _Foam_amount
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -59,19 +59,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Depth: -8.42
+    - _Depth: -8.88
     - _DepthFade_distance: 28.71
     - _Depth_fade: 2.88
     - _Direction_1_X: -0.3
     - _Direction_1_Y: 1
-    - _Foam_Scale: 433.34
-    - _Foam_Speed: 1
+    - _Foam_Amount: 5
+    - _Foam_Cutoff: 1
+    - _Foam_Scale: 15000
+    - _Foam_Speed: 1.33
     - _Foam_amount: 5
     - _Foam_cutoff: 1.36
-    - _Foam_distance: -1
+    - _Foam_distance: 0.36
     - _Foam_strenght: 39.3
     - _Foam_tile: -0.48
-    - _Normal_Speed: 11.1
+    - _Metalic: 0.1
+    - _Normal_Speed: 5
     - _Normal_strenght: 0.434
     - _Normal_tile: -0.11
     - _QueueControl: 0
@@ -84,13 +87,14 @@ Material:
     m_Colors:
     - _Deep_water_color: {r: 1, g: 1, b: 1, a: 0}
     - _Deepwater_color: {r: 0, g: 0.021459341, b: 1, a: 0}
-    - _Depth_color: {r: 0.08962262, g: 0.82659477, b: 1, a: 0}
-    - _Foam_Color: {r: 1, g: 0, b: 0, a: 0}
+    - _Depth_color: {r: 0.18553454, g: 0.8455325, b: 1, a: 0}
+    - _Foam_Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Foam_color: {r: 1024, g: 1024, b: 1024, a: 0}
     - _Normal_1: {r: 0, g: 1, b: 0, a: 0}
     - _Normal_2: {r: -1, g: 0, b: 0, a: 0}
     - _Surface_water_color: {r: 0, g: 0.9041667, b: 1, a: 0}
     - _Vector2: {r: 0, g: 0.3, b: 0, a: 0}
-    - _Water_color_1: {r: 0.05339978, g: 0.32606488, b: 0.4528302, a: 0}
-    - _Water_color_2: {r: 0.09158063, g: 0.65735656, b: 0.9245283, a: 0}
+    - _Water_color_1: {r: 0.08445068, g: 0.55094874, b: 0.76729554, a: 0}
+    - _Water_color_2: {r: 0.43081754, g: 0.818289, b: 1, a: 0}
     - _surface_water_color: {r: 0.5660378, g: 0.18422927, b: 0.18422927, a: 0}
   m_BuildTextureStacks: []
