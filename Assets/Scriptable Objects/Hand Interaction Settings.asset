@@ -16,7 +16,7 @@ MonoBehaviour:
   interactionPriorityMode: 2
   interactablesLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   interactRayCastRange: 0.2
   overlapSphereSize: 0.125
   canSwapItemFromHands: 1

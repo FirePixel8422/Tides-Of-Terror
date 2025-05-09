@@ -9,5 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Thomas Main Scene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 44ac9052fe074184f8a9f1ae9386a617,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: e729b28fbbe067c4995c8560d4424595,
+      type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: f0cf52a2f186d8e4c89cce721dba47d1,
       type: 2}

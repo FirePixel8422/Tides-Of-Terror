@@ -21,7 +21,7 @@ public class Pickupable : Interactable
     public float throwVelocityMultiplier = 1;
 
     [Header("Max velocity on each axis (direction is kept)")]
-    public Vector3 velocityClamp = new Vector3(3, 3, 3);
+    public Vector3 velocityClamp = new Vector3(10, 10, 10);
 
     [Header("Release object with 0 velocity of released with less then minRequiredVelocity")]
     public float minRequiredVelocityXYZ = 0.065f;

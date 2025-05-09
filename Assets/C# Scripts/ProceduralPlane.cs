@@ -1,15 +1,14 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider))]
-public class ProceduralGridPlane : MonoBehaviour
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+public class ProceduralSpherePlane : MonoBehaviour
 {
-    [Header("Grid Settings")]
+    [Header("Sphere Settings")]
     public int vertexCount = 10;
-    public float planeSize = 10.0f;
+    public float sphereDiameter = 10.0f;
 
-
-    private void GeneratePlane()
+    private void GenerateSpherePlane()
     {
         Mesh mesh = new Mesh();
         mesh.indexFormat = IndexFormat.UInt32;
@@ -19,10 +18,7 @@ public class ProceduralGridPlane : MonoBehaviour
         Vector2[] uvs = new Vector2[vertCount];
         int[] triangles = new int[(vertexCount - 1) * (vertexCount - 1) * 6];
 
-        float spacingX = planeSize / (vertexCount - 1);
-        float spacingZ = planeSize / (vertexCount - 1);
-
-        Vector3 originOffset = new Vector3(-planeSize / 2f, 0, -planeSize / 2f);
+        float radius = sphereDiameter * 0.5f;
 
         // Generate vertices and uvs
         for (int z = 0; z < vertexCount; z++)
@@ -30,8 +26,25 @@ public class ProceduralGridPlane : MonoBehaviour
             for (int x = 0; x < vertexCount; x++)
             {
                 int i = z * vertexCount + x;
-                vertices[i] = new Vector3(x * spacingX, 0, z * spacingZ) + originOffset;
-                uvs[i] = new Vector2((float)x / (vertexCount - 1), (float)z / (vertexCount - 1));
+
+                // Normalized grid position from 0-1
+                float u = (float)x / (vertexCount - 1);
+                float v = (float)z / (vertexCount - 1);
+
+                // Convert to spherical coordinates
+                float theta = u * Mathf.PI * 2.0f;  // around Y axis
+                float phi = v * Mathf.PI;           // from top (0) to bottom (PI)
+
+                // Convert spherical to cartesian
+                float sinPhi = Mathf.Sin(phi);
+                Vector3 pos = new Vector3(
+                    Mathf.Cos(theta) * sinPhi,
+                    Mathf.Cos(phi),
+                    Mathf.Sin(theta) * sinPhi
+                ) * radius;
+
+                vertices[i] = pos;
+                uvs[i] = new Vector2(u, v);
             }
         }
 
@@ -65,31 +78,29 @@ public class ProceduralGridPlane : MonoBehaviour
         MeshFilter filter = GetComponent<MeshFilter>();
         filter.sharedMesh = mesh;
 
-        // Set BoxCollider size to match plane
-        BoxCollider boxCollider = GetComponent<BoxCollider>();
-        boxCollider.size = new Vector3(planeSize, 0.0001f, planeSize);
-        boxCollider.center = Vector3.zero;
+        GetComponent<BoxCollider>().size = new Vector3(sphereDiameter, 0.001f, sphereDiameter);
     }
 
 
 
-    //Update when value changed ot first time created
+    // Update when value changed or first time created
     private void OnValidate()
     {
         if (vertexCount < 2)
         {
-            Debug.LogWarning("Nee je kan geen niet minder dan 2 tris hebben twan");
+            Debug.LogWarning("Minimum vertex count is 2, Twan.");
             vertexCount = 2;
         }
 
         if (Application.isPlaying) return;
 
-        GeneratePlane();
+        GenerateSpherePlane();
     }
+
     private void Reset()
     {
         if (Application.isPlaying) return;
 
-        GeneratePlane();
+        GenerateSpherePlane();
     }
 }
