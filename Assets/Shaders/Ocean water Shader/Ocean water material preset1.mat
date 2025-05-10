@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3410406863235901437
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Ocean water material preset1
+  m_Shader: {fileID: -6465566751694194690, guid: e9004cccb251ec544b0c8d4eec915d4c,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: _Foam_Cutoff _Foam_amount
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Foam_texture:
+        m_Texture: {fileID: 2800000, guid: 73a81805cee4a054b94c4fb9c9cdc62f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normals:
+        m_Texture: {fileID: 2800000, guid: fbe60ab9326a713478f89ac641b2d22c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Albedo: 1
+    - _Depth: -8.88
+    - _DepthFade_distance: 28.71
+    - _Depth_fade: 2.88
+    - _Direction_1_X: -0.3
+    - _Direction_1_Y: 1
+    - _Foam_Amount: 5
+    - _Foam_Cutoff: 1
+    - _Foam_Scale: 15000
+    - _Foam_Speed: 1.33
+    - _Foam_amount: 5
+    - _Foam_cutoff: 1.36
+    - _Foam_distance: 0.36
+    - _Foam_strenght: 39.3
+    - _Foam_tile: -0.48
+    - _Metalic: 0.1
+    - _Normal_Speed: 5
+    - _Normal_strenght: 0.418
+    - _Normal_tile: 0.06
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _Refraction: 1
+    - _Smoothness: 0.588
+    - _Wave_Scale: 1.5
+    - _Wave_Speed: 5.97
+    - _Wave_Strenght: 9.5
+    - _Wave_TIle: 0.05
+    m_Colors:
+    - _Deep_water_color: {r: 1, g: 1, b: 1, a: 0}
+    - _Deepwater_color: {r: 0, g: 0.021459341, b: 1, a: 0}
+    - _Depth_color: {r: 0.010813437, g: 0.50132996, b: 0.764151, a: 0}
+    - _Foam_Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Foam_color: {r: 1024, g: 1024, b: 1024, a: 0}
+    - _Normal_1: {r: 0, g: 1, b: 0, a: 0}
+    - _Normal_2: {r: -1, g: 0, b: 0, a: 0}
+    - _Surface_water_color: {r: 0, g: 0.9041667, b: 1, a: 0}
+    - _Vector2: {r: 0, g: 0.3, b: 0, a: 0}
+    - _Water_color_1: {r: 0.0039215744, g: 0.73408455, b: 0.9254902, a: 0}
+    - _Water_color_2: {r: 0, g: 0.936759, b: 1, a: 0}
+    - _surface_water_color: {r: 0.5660378, g: 0.18422927, b: 0.18422927, a: 0}
+  m_BuildTextureStacks: []
