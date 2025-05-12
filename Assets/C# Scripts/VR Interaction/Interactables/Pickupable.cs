@@ -20,6 +20,8 @@ public class Pickupable : Interactable
     [Header("How hard can you throw this object")]
     public float throwVelocityMultiplier = 1;
 
+    public RigidbodyConstraints onThrowConstraints = RigidbodyConstraints.None;
+
     [Header("Max velocity on each axis (direction is kept)")]
     public Vector3 velocityClamp = new Vector3(10, 10, 10);
 
@@ -41,7 +43,6 @@ public class Pickupable : Interactable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
 
@@ -59,13 +60,15 @@ public class Pickupable : Interactable
 
 
     [BurstCompile]
-    public override void Pickup(InteractionController hand)
+    public override void Pickup(InteractionController handInteractor)
     {
-        bool isRightHand = hand.hand.isRightHand;
+        bool isRightHand = handInteractor.hand.isRightHand;
 
-        base.Pickup(hand);
+        base.Pickup(handInteractor);
 
-        transform.SetParent(hand.heldItemHolder, false, false);
+        transform.SetParent(handInteractor.heldItemHolder, false, false);
+
+        print("pickup: " + gameObject.name);
 
         TogglePhysics(false);
 
@@ -144,7 +147,7 @@ public class Pickupable : Interactable
         //    }
         //}
 
-        rb.constraints = state ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
+        rb.constraints = state ? onThrowConstraints : RigidbodyConstraints.FreezeAll;
     }
 
 

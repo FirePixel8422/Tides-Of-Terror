@@ -41,6 +41,7 @@ public class VRHandAnimator : MonoBehaviour
 
 
 
+
     public void UpdateHandTransform(Vector3 pos, Quaternion rot, bool flipHand)
     {
         Quaternion targetRot = rot;
@@ -51,6 +52,11 @@ public class VRHandAnimator : MonoBehaviour
 
         transform.SetPositionAndRotation(pos, targetRot);
     }
+    public void UpdateHandTransform(Vector3 pos)
+    {
+        transform.position = pos;
+    }
+
 
     public void ResetHandTransform()
     {

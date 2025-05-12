@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Burst;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,7 +17,7 @@ public class Interactable : MonoBehaviour
 
     public float objectSize;
 
-    [SerializeField] private UnityEvent OnInteract;
+    [SerializeField] protected UnityEvent OnInteract;
 
 
     protected virtual void Start()
@@ -52,17 +48,17 @@ public class Interactable : MonoBehaviour
     #region Pickup, Throw And Drop
 
     [BurstCompile]
-    public virtual void Pickup(InteractionController hand)
+    public virtual void Pickup(InteractionController handInteractor)
     {
         if (connectedHand != null)
         {
             connectedHand.isHoldingObject = false;
         }
 
-        connectedHand = hand;
+        connectedHand = handInteractor;
         heldByPlayer = true;
 
-        OnInteract.Invoke();
+        OnInteract?.Invoke();
     }
 
 

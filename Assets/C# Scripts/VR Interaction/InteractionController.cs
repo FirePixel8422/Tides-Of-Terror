@@ -1,7 +1,6 @@
 using System;
 using Unity.Burst;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 
@@ -14,11 +13,9 @@ public class InteractionController : MonoBehaviour
     public HandInteractionSettingsSO settings;
 
 
-    [SerializeField]
-    private Transform rayTransform;
+    [SerializeField] private Transform rayTransform;
 
-    [SerializeField]
-    private Transform overlapSphereTransform;
+    [SerializeField] private Transform overlapSphereTransform;
 
     public Transform heldItemHolder;
 
@@ -79,10 +76,18 @@ public class InteractionController : MonoBehaviour
 
         savedLocalVelocity = new Vector3[frameAmount];
         savedAngularVelocity = new Vector3[frameAmount];
+    }
 
+
+    private void OnEnable()
+    {
         UpdateScheduler.Register(OnUpdate);
     }
 
+    private void OnDisable()
+    {
+        UpdateScheduler.Unregister(OnUpdate);
+    }
 
 
 
@@ -282,7 +287,7 @@ public class InteractionController : MonoBehaviour
 
     #region Drop and Pickup
 
-    public void Pickup(Interactable toPickupObject)
+    private void Pickup(Interactable toPickupObject)
     {
         //if the object that is trying to be picked up by this hand, is held by the other hand and canSwapItemFromHands is false, return
         if (toPickupObject.interactable == false || (toPickupObject.heldByPlayer && settings.canSwapItemFromHands == false))
@@ -325,6 +330,17 @@ public class InteractionController : MonoBehaviour
 
         heldObject = null;
         isHoldingObject = false;
+    }
+
+    public void ForceDrop()
+    {
+        if (isHoldingObject)
+        {
+            heldObject.Drop();
+
+            heldObject = null;
+            isHoldingObject = false;
+        }
     }
 
     #endregion
@@ -410,10 +426,4 @@ public class InteractionController : MonoBehaviour
     //}
 
     #endregion
-
-
-    private void OnDestroy()
-    {
-        UpdateScheduler.Unregister(OnUpdate);
-    }
 }

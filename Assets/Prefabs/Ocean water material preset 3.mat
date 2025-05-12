@@ -96,7 +96,7 @@ Material:
     - _Wave_Scale: 1.5
     - _Wave_Speed: 7.35
     - _Wave_Strenght: 9.5
-    - _Wave_TIle: 0.05
+    - _Wave_TIle: 0.1
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 0}
     - _Deep_water_color: {r: 1, g: 1, b: 1, a: 0}

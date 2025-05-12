@@ -9,13 +9,11 @@ public class InteractableButton : Interactable
 
     protected override void Start()
     {
-        base.Start();
-
         buttonAnimator = GetComponent<Animator>();
     }
 
 
-    public override void Pickup(InteractionController hand)
+    public override void Pickup(InteractionController handInteractor)
     {
         buttonAnimator.SetTrigger("Press");
     }
