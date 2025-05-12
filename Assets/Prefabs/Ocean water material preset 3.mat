@@ -81,7 +81,7 @@ Material:
     - _Foam_distance: 0.36
     - _Foam_strenght: 39.3
     - _Foam_strenght_1: 0.4
-    - _Foam_texture_speed: 0.0001
+    - _Foam_texture_speed: 0.00006
     - _Foam_tile: -0.48
     - _Metalic: 0
     - _Normal_Speed: 5
