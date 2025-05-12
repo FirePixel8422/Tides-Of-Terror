@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -5,8 +6,11 @@ using UnityEngine.Rendering;
 public class ProceduralSpherePlane : MonoBehaviour
 {
     [Header("Sphere Settings")]
-    public int vertexCount = 10;
-    public float sphereDiameter = 10.0f;
+    [SerializeField] private int vertexCount = 10;
+    [SerializeField] private float sphereDiameter = 10.0f;
+
+
+
 
     private void GenerateSpherePlane()
     {
@@ -16,8 +20,10 @@ public class ProceduralSpherePlane : MonoBehaviour
         int vertCount = vertexCount * vertexCount;
         Vector3[] vertices = new Vector3[vertCount];
         Vector2[] uvs = new Vector2[vertCount];
-        int[] triangles = new int[(vertexCount - 1) * (vertexCount - 1) * 6];
+        List<int> triangles = new List<int>();
 
+        float halfSize = sphereDiameter * 0.5f;
+        float step = sphereDiameter / (vertexCount - 1);
         float radius = sphereDiameter * 0.5f;
 
         // Generate vertices and uvs
@@ -27,51 +33,51 @@ public class ProceduralSpherePlane : MonoBehaviour
             {
                 int i = z * vertexCount + x;
 
-                // Normalized grid position from 0-1
-                float u = (float)x / (vertexCount - 1);
-                float v = (float)z / (vertexCount - 1);
+                float px = -halfSize + x * step;
+                float pz = -halfSize + z * step;
+                float distSq = px * px + pz * pz;
 
-                // Convert to spherical coordinates
-                float theta = u * Mathf.PI * 2.0f;  // around Y axis
-                float phi = v * Mathf.PI;           // from top (0) to bottom (PI)
+                // If within sphere boundary, project onto sphere surface
+                float py = distSq <= radius * radius
+                    ? Mathf.Sqrt(radius * radius - distSq)
+                    : 0.0f;
 
-                // Convert spherical to cartesian
-                float sinPhi = Mathf.Sin(phi);
-                Vector3 pos = new Vector3(
-                    Mathf.Cos(theta) * sinPhi,
-                    Mathf.Cos(phi),
-                    Mathf.Sin(theta) * sinPhi
-                ) * radius;
-
-                vertices[i] = pos;
-                uvs[i] = new Vector2(u, v);
+                vertices[i] = new Vector3(px, py, pz);
+                uvs[i] = new Vector2((float)x / (vertexCount - 1), (float)z / (vertexCount - 1));
             }
         }
 
-        // Generate triangles
-        int t = 0;
+        // Generate triangles — only if all four corners are inside the sphere
         for (int z = 0; z < vertexCount - 1; z++)
         {
             for (int x = 0; x < vertexCount - 1; x++)
             {
-                int i = z * vertexCount + x;
+                int i0 = z * vertexCount + x;
+                int i1 = i0 + 1;
+                int i2 = i0 + vertexCount;
+                int i3 = i2 + 1;
 
-                // Triangle 1
-                triangles[t++] = i;
-                triangles[t++] = i + vertexCount;
-                triangles[t++] = i + 1;
+                // Check if all four corners are inside the sphere
+                if (vertices[i0].y > 0.0f && vertices[i1].y > 0.0f &&
+                    vertices[i2].y > 0.0f && vertices[i3].y > 0.0f)
+                {
+                    // Triangle 1
+                    triangles.Add(i0);
+                    triangles.Add(i2);
+                    triangles.Add(i1);
 
-                // Triangle 2
-                triangles[t++] = i + 1;
-                triangles[t++] = i + vertexCount;
-                triangles[t++] = i + vertexCount + 1;
+                    // Triangle 2
+                    triangles.Add(i1);
+                    triangles.Add(i2);
+                    triangles.Add(i3);
+                }
             }
         }
 
         // Assign mesh
         mesh.vertices = vertices;
         mesh.uv = uvs;
-        mesh.triangles = triangles;
+        mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
@@ -82,6 +88,8 @@ public class ProceduralSpherePlane : MonoBehaviour
     }
 
 
+
+#if UNITY_EDITOR
 
     // Update when value changed or first time created
     private void OnValidate()
@@ -103,4 +111,6 @@ public class ProceduralSpherePlane : MonoBehaviour
 
         GenerateSpherePlane();
     }
+
+#endif
 }
