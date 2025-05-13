@@ -6,7 +6,7 @@
             "id": "cb1108cf-1694-4933-8175-a1b71fd0dbfd",
             "actions": [
                 {
-                    "name": "leftsectrigger",
+                    "name": "Left Secundary Trigger",
                     "type": "Button",
                     "id": "d26b1253-748e-40b7-a666-bea1615b7dba",
                     "expectedControlType": "",
@@ -15,7 +15,25 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "rightsectrigger",
+                    "name": "Left: Joystick, Move",
+                    "type": "Value",
+                    "id": "c507690b-a0d0-473c-b5ab-5cfdec50dc50",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Right: Joystick, Turn",
+                    "type": "Value",
+                    "id": "c7a5ea20-a517-4c80-9794-7c1abf35fbed",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Right Secundary Trigger",
                     "type": "Button",
                     "id": "85fb0dbb-6451-4859-9850-16fbba3775e3",
                     "expectedControlType": "",
@@ -24,7 +42,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "lefttriggerheld",
+                    "name": "Left Trigger",
                     "type": "Value",
                     "id": "8e9fcbd2-85d2-4e2a-ac6e-0001c4553801",
                     "expectedControlType": "Axis",
@@ -33,7 +51,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "righttriggerheld",
+                    "name": "Right Trigger",
                     "type": "Value",
                     "id": "eaa1e01b-3402-4cc9-a849-2615f4c7e2ef",
                     "expectedControlType": "Axis",
@@ -42,7 +60,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "B",
+                    "name": "Right: B",
                     "type": "Button",
                     "id": "b1f771c3-b8fe-4911-9ee6-f10ff42ed654",
                     "expectedControlType": "",
@@ -59,7 +77,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "leftsectrigger",
+                    "action": "Left Secundary Trigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0815f27b-649d-4cb7-84b4-e92910cbfea9",
+                    "path": "<XRController>{LeftHand}/{Primary2DAxis}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left: Joystick, Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "385e1506-5dcc-4b33-b307-6d8a2fb334c5",
+                    "path": "<XRController>{RightHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right: Joystick, Turn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -70,7 +110,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "rightsectrigger",
+                    "action": "Right Secundary Trigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -81,7 +121,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "lefttriggerheld",
+                    "action": "Left Trigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -92,7 +132,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "righttriggerheld",
+                    "action": "Right Trigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -103,7 +143,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "B",
+                    "action": "Right: B",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

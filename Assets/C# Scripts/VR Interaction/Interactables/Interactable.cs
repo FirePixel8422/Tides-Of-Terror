@@ -1,4 +1,5 @@
 using Unity.Burst;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -65,7 +66,7 @@ public class Interactable : MonoBehaviour
 
 
     [BurstCompile]
-    public virtual void Throw(Vector3 velocity, Vector3 angularVelocity)
+    public virtual void Throw(float3 velocity, float3 angularVelocity)
     {
         connectedHand = null;
         heldByPlayer = false;

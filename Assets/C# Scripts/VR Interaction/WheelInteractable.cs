@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 
@@ -9,6 +10,8 @@ public class WheelInteractable : Interactable
 
 
     [SerializeField] private bool snapHandPosToWheel;
+    [SerializeField] private Vector3[] handPinPoints;
+    [SerializeField] private float pinPointDist;
 
     [SerializeField] private float interactionRange;
 
@@ -51,9 +54,12 @@ public class WheelInteractable : Interactable
         }
 
 
-        cWaveSteerResetInterval = Random.Range(waveResetSteerIntervalMin, waveResetSteerIntervalMax);
-        cWaveSteerPower = Random.Range(waveResetSteerPowerMin, waveResetSteerPowerMax);
+        cWaveSteerResetInterval = EzRandom.Range(waveResetSteerIntervalMin, waveResetSteerIntervalMax);
+        cWaveSteerPower = EzRandom.Range(waveResetSteerPowerMin, waveResetSteerPowerMax);
     }
+
+    private void OnEnable() => UpdateScheduler.Register(OnUpdate);
+    private void OnDisable() => UpdateScheduler.Unregister(OnUpdate);
 
 
     public override void Pickup(InteractionController handInteractor)
@@ -130,7 +136,7 @@ public class WheelInteractable : Interactable
         base.Drop();
     }
 
-    public override void Throw(Vector3 velocity, Vector3 angularVelocity)
+    public override void Throw(float3 velocity, float3 angularVelocity)
     {
         Hand.Left.vrHandAnimator.ResetHandTransform();
         Hand.Right.vrHandAnimator.ResetHandTransform();
@@ -157,9 +163,9 @@ public class WheelInteractable : Interactable
 
             if (cWaveSteerResetTime >= cWaveSteerResetInterval)
             {
-                cWaveSteerResetInterval = Random.Range(waveResetSteerIntervalMin, waveResetSteerIntervalMax);
+                cWaveSteerResetInterval = EzRandom.Range(waveResetSteerIntervalMin, waveResetSteerIntervalMax);
 
-                cWaveSteerPower = Random.Range(waveResetSteerPowerMin, waveResetSteerPowerMax);
+                cWaveSteerPower = EzRandom.Range(waveResetSteerPowerMin, waveResetSteerPowerMax);
 
                 cWaveSteerResetTime = 0;
             }
@@ -230,5 +236,15 @@ public class WheelInteractable : Interactable
     private void OnDestroy()
     {
         UpdateScheduler.Unregister(OnUpdate);
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        for (int i = 0; i < handPinPoints.Length; i++)
+        {
+            Gizmos.DrawLine(transform.position, transform.position + handPinPoints[i].normalized * pinPointDist);
+            Gizmos.DrawWireSphere(transform.position + handPinPoints[i].normalized * pinPointDist, 0.05f);
+        }
     }
 }

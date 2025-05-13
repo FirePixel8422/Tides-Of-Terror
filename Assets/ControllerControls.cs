@@ -28,7 +28,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
             ""id"": ""cb1108cf-1694-4933-8175-a1b71fd0dbfd"",
             ""actions"": [
                 {
-                    ""name"": ""leftsectrigger"",
+                    ""name"": ""Left Secundary Trigger"",
                     ""type"": ""Button"",
                     ""id"": ""d26b1253-748e-40b7-a666-bea1615b7dba"",
                     ""expectedControlType"": """",
@@ -37,7 +37,25 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""rightsectrigger"",
+                    ""name"": ""Left: Joystick, Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""c507690b-a0d0-473c-b5ab-5cfdec50dc50"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Right: Joystick, Turn"",
+                    ""type"": ""Value"",
+                    ""id"": ""c7a5ea20-a517-4c80-9794-7c1abf35fbed"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Right Secundary Trigger"",
                     ""type"": ""Button"",
                     ""id"": ""85fb0dbb-6451-4859-9850-16fbba3775e3"",
                     ""expectedControlType"": """",
@@ -46,7 +64,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""lefttriggerheld"",
+                    ""name"": ""Left Trigger"",
                     ""type"": ""Value"",
                     ""id"": ""8e9fcbd2-85d2-4e2a-ac6e-0001c4553801"",
                     ""expectedControlType"": ""Axis"",
@@ -55,7 +73,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""righttriggerheld"",
+                    ""name"": ""Right Trigger"",
                     ""type"": ""Value"",
                     ""id"": ""eaa1e01b-3402-4cc9-a849-2615f4c7e2ef"",
                     ""expectedControlType"": ""Axis"",
@@ -64,7 +82,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""B"",
+                    ""name"": ""Right: B"",
                     ""type"": ""Button"",
                     ""id"": ""b1f771c3-b8fe-4911-9ee6-f10ff42ed654"",
                     ""expectedControlType"": """",
@@ -81,7 +99,29 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""leftsectrigger"",
+                    ""action"": ""Left Secundary Trigger"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0815f27b-649d-4cb7-84b4-e92910cbfea9"",
+                    ""path"": ""<XRController>{LeftHand}/{Primary2DAxis}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left: Joystick, Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""385e1506-5dcc-4b33-b307-6d8a2fb334c5"",
+                    ""path"": ""<XRController>{RightHand}/primary2DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right: Joystick, Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -92,7 +132,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""rightsectrigger"",
+                    ""action"": ""Right Secundary Trigger"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -103,7 +143,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""lefttriggerheld"",
+                    ""action"": ""Left Trigger"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -114,7 +154,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""righttriggerheld"",
+                    ""action"": ""Right Trigger"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -125,7 +165,7 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""B"",
+                    ""action"": ""Right: B"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -136,11 +176,13 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
 }");
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
-        m_Gameplay_leftsectrigger = m_Gameplay.FindAction("leftsectrigger", throwIfNotFound: true);
-        m_Gameplay_rightsectrigger = m_Gameplay.FindAction("rightsectrigger", throwIfNotFound: true);
-        m_Gameplay_lefttriggerheld = m_Gameplay.FindAction("lefttriggerheld", throwIfNotFound: true);
-        m_Gameplay_righttriggerheld = m_Gameplay.FindAction("righttriggerheld", throwIfNotFound: true);
-        m_Gameplay_B = m_Gameplay.FindAction("B", throwIfNotFound: true);
+        m_Gameplay_LeftSecundaryTrigger = m_Gameplay.FindAction("Left Secundary Trigger", throwIfNotFound: true);
+        m_Gameplay_LeftJoystickMove = m_Gameplay.FindAction("Left: Joystick, Move", throwIfNotFound: true);
+        m_Gameplay_RightJoystickTurn = m_Gameplay.FindAction("Right: Joystick, Turn", throwIfNotFound: true);
+        m_Gameplay_RightSecundaryTrigger = m_Gameplay.FindAction("Right Secundary Trigger", throwIfNotFound: true);
+        m_Gameplay_LeftTrigger = m_Gameplay.FindAction("Left Trigger", throwIfNotFound: true);
+        m_Gameplay_RightTrigger = m_Gameplay.FindAction("Right Trigger", throwIfNotFound: true);
+        m_Gameplay_RightB = m_Gameplay.FindAction("Right: B", throwIfNotFound: true);
     }
 
     ~@ControllerControls()
@@ -207,20 +249,24 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
     // Gameplay
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
-    private readonly InputAction m_Gameplay_leftsectrigger;
-    private readonly InputAction m_Gameplay_rightsectrigger;
-    private readonly InputAction m_Gameplay_lefttriggerheld;
-    private readonly InputAction m_Gameplay_righttriggerheld;
-    private readonly InputAction m_Gameplay_B;
+    private readonly InputAction m_Gameplay_LeftSecundaryTrigger;
+    private readonly InputAction m_Gameplay_LeftJoystickMove;
+    private readonly InputAction m_Gameplay_RightJoystickTurn;
+    private readonly InputAction m_Gameplay_RightSecundaryTrigger;
+    private readonly InputAction m_Gameplay_LeftTrigger;
+    private readonly InputAction m_Gameplay_RightTrigger;
+    private readonly InputAction m_Gameplay_RightB;
     public struct GameplayActions
     {
         private @ControllerControls m_Wrapper;
         public GameplayActions(@ControllerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @leftsectrigger => m_Wrapper.m_Gameplay_leftsectrigger;
-        public InputAction @rightsectrigger => m_Wrapper.m_Gameplay_rightsectrigger;
-        public InputAction @lefttriggerheld => m_Wrapper.m_Gameplay_lefttriggerheld;
-        public InputAction @righttriggerheld => m_Wrapper.m_Gameplay_righttriggerheld;
-        public InputAction @B => m_Wrapper.m_Gameplay_B;
+        public InputAction @LeftSecundaryTrigger => m_Wrapper.m_Gameplay_LeftSecundaryTrigger;
+        public InputAction @LeftJoystickMove => m_Wrapper.m_Gameplay_LeftJoystickMove;
+        public InputAction @RightJoystickTurn => m_Wrapper.m_Gameplay_RightJoystickTurn;
+        public InputAction @RightSecundaryTrigger => m_Wrapper.m_Gameplay_RightSecundaryTrigger;
+        public InputAction @LeftTrigger => m_Wrapper.m_Gameplay_LeftTrigger;
+        public InputAction @RightTrigger => m_Wrapper.m_Gameplay_RightTrigger;
+        public InputAction @RightB => m_Wrapper.m_Gameplay_RightB;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -230,40 +276,52 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_GameplayActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_GameplayActionsCallbackInterfaces.Add(instance);
-            @leftsectrigger.started += instance.OnLeftsectrigger;
-            @leftsectrigger.performed += instance.OnLeftsectrigger;
-            @leftsectrigger.canceled += instance.OnLeftsectrigger;
-            @rightsectrigger.started += instance.OnRightsectrigger;
-            @rightsectrigger.performed += instance.OnRightsectrigger;
-            @rightsectrigger.canceled += instance.OnRightsectrigger;
-            @lefttriggerheld.started += instance.OnLefttriggerheld;
-            @lefttriggerheld.performed += instance.OnLefttriggerheld;
-            @lefttriggerheld.canceled += instance.OnLefttriggerheld;
-            @righttriggerheld.started += instance.OnRighttriggerheld;
-            @righttriggerheld.performed += instance.OnRighttriggerheld;
-            @righttriggerheld.canceled += instance.OnRighttriggerheld;
-            @B.started += instance.OnB;
-            @B.performed += instance.OnB;
-            @B.canceled += instance.OnB;
+            @LeftSecundaryTrigger.started += instance.OnLeftSecundaryTrigger;
+            @LeftSecundaryTrigger.performed += instance.OnLeftSecundaryTrigger;
+            @LeftSecundaryTrigger.canceled += instance.OnLeftSecundaryTrigger;
+            @LeftJoystickMove.started += instance.OnLeftJoystickMove;
+            @LeftJoystickMove.performed += instance.OnLeftJoystickMove;
+            @LeftJoystickMove.canceled += instance.OnLeftJoystickMove;
+            @RightJoystickTurn.started += instance.OnRightJoystickTurn;
+            @RightJoystickTurn.performed += instance.OnRightJoystickTurn;
+            @RightJoystickTurn.canceled += instance.OnRightJoystickTurn;
+            @RightSecundaryTrigger.started += instance.OnRightSecundaryTrigger;
+            @RightSecundaryTrigger.performed += instance.OnRightSecundaryTrigger;
+            @RightSecundaryTrigger.canceled += instance.OnRightSecundaryTrigger;
+            @LeftTrigger.started += instance.OnLeftTrigger;
+            @LeftTrigger.performed += instance.OnLeftTrigger;
+            @LeftTrigger.canceled += instance.OnLeftTrigger;
+            @RightTrigger.started += instance.OnRightTrigger;
+            @RightTrigger.performed += instance.OnRightTrigger;
+            @RightTrigger.canceled += instance.OnRightTrigger;
+            @RightB.started += instance.OnRightB;
+            @RightB.performed += instance.OnRightB;
+            @RightB.canceled += instance.OnRightB;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
         {
-            @leftsectrigger.started -= instance.OnLeftsectrigger;
-            @leftsectrigger.performed -= instance.OnLeftsectrigger;
-            @leftsectrigger.canceled -= instance.OnLeftsectrigger;
-            @rightsectrigger.started -= instance.OnRightsectrigger;
-            @rightsectrigger.performed -= instance.OnRightsectrigger;
-            @rightsectrigger.canceled -= instance.OnRightsectrigger;
-            @lefttriggerheld.started -= instance.OnLefttriggerheld;
-            @lefttriggerheld.performed -= instance.OnLefttriggerheld;
-            @lefttriggerheld.canceled -= instance.OnLefttriggerheld;
-            @righttriggerheld.started -= instance.OnRighttriggerheld;
-            @righttriggerheld.performed -= instance.OnRighttriggerheld;
-            @righttriggerheld.canceled -= instance.OnRighttriggerheld;
-            @B.started -= instance.OnB;
-            @B.performed -= instance.OnB;
-            @B.canceled -= instance.OnB;
+            @LeftSecundaryTrigger.started -= instance.OnLeftSecundaryTrigger;
+            @LeftSecundaryTrigger.performed -= instance.OnLeftSecundaryTrigger;
+            @LeftSecundaryTrigger.canceled -= instance.OnLeftSecundaryTrigger;
+            @LeftJoystickMove.started -= instance.OnLeftJoystickMove;
+            @LeftJoystickMove.performed -= instance.OnLeftJoystickMove;
+            @LeftJoystickMove.canceled -= instance.OnLeftJoystickMove;
+            @RightJoystickTurn.started -= instance.OnRightJoystickTurn;
+            @RightJoystickTurn.performed -= instance.OnRightJoystickTurn;
+            @RightJoystickTurn.canceled -= instance.OnRightJoystickTurn;
+            @RightSecundaryTrigger.started -= instance.OnRightSecundaryTrigger;
+            @RightSecundaryTrigger.performed -= instance.OnRightSecundaryTrigger;
+            @RightSecundaryTrigger.canceled -= instance.OnRightSecundaryTrigger;
+            @LeftTrigger.started -= instance.OnLeftTrigger;
+            @LeftTrigger.performed -= instance.OnLeftTrigger;
+            @LeftTrigger.canceled -= instance.OnLeftTrigger;
+            @RightTrigger.started -= instance.OnRightTrigger;
+            @RightTrigger.performed -= instance.OnRightTrigger;
+            @RightTrigger.canceled -= instance.OnRightTrigger;
+            @RightB.started -= instance.OnRightB;
+            @RightB.performed -= instance.OnRightB;
+            @RightB.canceled -= instance.OnRightB;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -283,10 +341,12 @@ public partial class @ControllerControls: IInputActionCollection2, IDisposable
     public GameplayActions @Gameplay => new GameplayActions(this);
     public interface IGameplayActions
     {
-        void OnLeftsectrigger(InputAction.CallbackContext context);
-        void OnRightsectrigger(InputAction.CallbackContext context);
-        void OnLefttriggerheld(InputAction.CallbackContext context);
-        void OnRighttriggerheld(InputAction.CallbackContext context);
-        void OnB(InputAction.CallbackContext context);
+        void OnLeftSecundaryTrigger(InputAction.CallbackContext context);
+        void OnLeftJoystickMove(InputAction.CallbackContext context);
+        void OnRightJoystickTurn(InputAction.CallbackContext context);
+        void OnRightSecundaryTrigger(InputAction.CallbackContext context);
+        void OnLeftTrigger(InputAction.CallbackContext context);
+        void OnRightTrigger(InputAction.CallbackContext context);
+        void OnRightB(InputAction.CallbackContext context);
     }
 }

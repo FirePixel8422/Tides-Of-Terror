@@ -50,7 +50,7 @@ public class HingeInteractable : Interactable
         base.Drop();
     }
 
-    public override void Throw(Vector3 velocity, Vector3 angularVelocity)
+    public override void Throw(float3 velocity, float3 angularVelocity)
     {
         connectedHand.hand.vrHandAnimator.ResetHandTransform();
 
