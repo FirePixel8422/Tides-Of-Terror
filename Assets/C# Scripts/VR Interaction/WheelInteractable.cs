@@ -1,36 +1,50 @@
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 using UnityEngine;
-
-
 
 public class WheelInteractable : Interactable
 {
-    [Header("What axises can this interactable turn?")]
+    [Header("What axis can this interactable turn?")]
     [SerializeField] private SingleTurnConstraints turnOnAxis;
 
 
-    [SerializeField] private bool snapHandPosToWheel;
+    [SerializeField] private Transform boatTransform;
+    [SerializeField] private float boatSteerSpeed;
+
+
     [SerializeField] private Vector3[] handPinPoints;
     [SerializeField] private float pinPointDist;
 
     [SerializeField] private float interactionRange;
+    [SerializeField] private float pinPointMaxRange;
+
+    [SerializeField] private float minReqWheelAngleForDetection;
 
 
     [SerializeField] private float rotSpeed;
     [SerializeField] private float maxRotSpeed;
     [SerializeField] private float rotDecayPercent;
 
-    [SerializeField] private float waveResetSteerIntervalMin, waveResetSteerIntervalMax;
-    [SerializeField] private float waveResetSteerPowerMin, waveResetSteerPowerMax;
-    [SerializeField] private float cWaveSteerPower;
+    [SerializeField] private MinMaxFloat waveResetSteerInterval;
+    [SerializeField] private MinMaxFloat waveResetSteerPower;
 
-    private float cWaveSteerResetTime, cWaveSteerResetInterval;
+    private float cWaveSteerPower;
+    private float cWaveSteerResetTime;
+    private float cWaveSteerResetInterval;
 
     [SerializeField] private float steerAngleClamp;
 
 
     private Vector3 rotDirection;
     [SerializeField] private float steerAngle;
+
+    private Hand leftHand;
+    private Hand rightHand;
+
+    private int leftHandPinPointIndex = -1;
+    private int rightHandPinPointIndex = -1;
+
+    private Vector3 leftHandPrevLocalPos;
+    private Vector3 rightHandPrevLocalPos;
 
 
 
@@ -54,9 +68,10 @@ public class WheelInteractable : Interactable
         }
 
 
-        cWaveSteerResetInterval = EzRandom.Range(waveResetSteerIntervalMin, waveResetSteerIntervalMax);
-        cWaveSteerPower = EzRandom.Range(waveResetSteerPowerMin, waveResetSteerPowerMax);
+        cWaveSteerResetInterval = EzRandom.Range(waveResetSteerInterval);
+        cWaveSteerPower = EzRandom.Range(waveResetSteerPower);
     }
+
 
     private void OnEnable() => UpdateScheduler.Register(OnUpdate);
     private void OnDisable() => UpdateScheduler.Unregister(OnUpdate);
@@ -64,84 +79,83 @@ public class WheelInteractable : Interactable
 
     public override void Pickup(InteractionController handInteractor)
     {
-        Hand leftHand = Hand.Left;
-        Hand rightHand = Hand.Right;
-
-        leftHand.interactionController.ForceDrop();
-        rightHand.interactionController.ForceDrop();
-
-        leftHand.vrHandAnimator.ResetHandTransform();
-        rightHand.vrHandAnimator.ResetHandTransform();
-
-        connectedHand = handInteractor;
-        heldByPlayer = true;
-
-
         //call pickup for non interacting hand
         if (handInteractor.hand.isLeftHand)
         {
-            SetupUnconnectedHand(leftHand, transform.position);
+            if (SnapHandToClosestWheelPinPoint(handInteractor.hand))
+            {
+                leftHand = handInteractor.hand;
+            }
+            else
+            {
+                handInteractor.ForceDrop();
+                return;
+            }
         }
         else
         {
-            SetupUnconnectedHand(rightHand, transform.position);
+            if (SnapHandToClosestWheelPinPoint(handInteractor.hand))
+            {
+                rightHand = handInteractor.hand;
+            }
+            else
+            {
+                handInteractor.ForceDrop();
+                return;
+            }
         }
+
+        heldByPlayer = true;
     }
 
-    private void SetupUnconnectedHand(Hand hand, Vector3 wheelPos)
+    public override void Drop(HandType handType)
     {
-        Vector3 handTransformPos = hand.vrHandAnimator.transform.position;
-
-        float handDistanceToTransform = Vector3.Distance(transform.position, handTransformPos);
-
-        if (handDistanceToTransform > interactionRange)
+        if (handType == HandType.Left)
         {
-            connectedHand.hand.vrHandAnimator.ResetHandTransform();
+            leftHand.vrHandAnimator.ResetHandTransform();
+            leftHand = null;
+            leftHandPinPointIndex = -1;
 
-            connectedHand.isHoldingObject = false;
-            connectedHand = null;
-            heldByPlayer = false;
+            if (rightHand == null)
+            {
+                heldByPlayer = false;
+            }
         }
         else
         {
-            Vector3 handPos = connectedHand.hand.vrHandAnimator.transform.position;
+            rightHand.vrHandAnimator.ResetHandTransform();
+            rightHand = null;
+            rightHandPinPointIndex = -1;
 
-            if (turnOnAxis.HasFlag(SingleTurnConstraints.X))
+            if (leftHand == null)
             {
-                handPos.x = wheelPos.x;
+                heldByPlayer = false;
             }
-            else if (turnOnAxis.HasFlag(SingleTurnConstraints.Y))
-            {
-                handPos.y = wheelPos.y;
-            }
-            else if (turnOnAxis.HasFlag(SingleTurnConstraints.Z))
-            {
-                handPos.z = wheelPos.z;
-            }
-
-            connectedHand.hand.vrHandAnimator.UpdateHandTransform(handPos);
         }
-
-        hand.interactionController.enabled = false;
     }
 
-
-
-
-    public override void Drop()
+    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
-        Hand.Left.vrHandAnimator.ResetHandTransform();
-        Hand.Right.vrHandAnimator.ResetHandTransform();
+        if (handType == HandType.Left)
+        {
+            leftHand.vrHandAnimator.ResetHandTransform();
+            leftHand = null;
 
-        base.Drop();
-    }
+            if (rightHand == null)
+            {
+                heldByPlayer = false;
+            }
+        }
+        else
+        {
+            rightHand.vrHandAnimator.ResetHandTransform();
+            rightHand = null;
 
-    public override void Throw(float3 velocity, float3 angularVelocity)
-    {
-        Hand.Left.vrHandAnimator.ResetHandTransform();
-        Hand.Right.vrHandAnimator.ResetHandTransform();
-
-        base.Throw(velocity, angularVelocity);
+            if (leftHand == null)
+            {
+                heldByPlayer = false;
+            }
+        }
     }
 
 
@@ -149,13 +163,40 @@ public class WheelInteractable : Interactable
     {
         if (heldByPlayer)
         {
-            if (snapHandPosToWheel)
-            {
-                Vector3 transformPos = transform.position;
-                Vector3 handTransformPos = connectedHand.transform.position;
+            Vector3 wheelpos = transform.position;
 
-                SnapHandToTransform(transformPos, handTransformPos);
+            float newRotSpeed = 0;
+
+            if (leftHandPinPointIndex != -1)
+            {
+                if (UpdateHandPosition(leftHand, wheelpos))
+                {
+                    Vector3 newHandLocalPos = leftHand.interactionController.transform.position - boatTransform.position;
+                    newRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, leftHandPrevLocalPos);
+                    leftHandPrevLocalPos = newHandLocalPos;
+                }
             }
+
+            if (rightHandPinPointIndex != -1)
+            {
+                if (UpdateHandPosition(rightHand, wheelpos))
+                {
+                    Vector3 newHandLocalPos = rightHand.interactionController.transform.position - boatTransform.position;
+                    newRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, rightHandPrevLocalPos);
+                    rightHandPrevLocalPos = newHandLocalPos;
+                }
+            }
+
+            rotSpeed += newRotSpeed;
+
+            float prevStearAngle = steerAngle;
+
+            steerAngle = math.clamp(steerAngle + newRotSpeed, -steerAngleClamp, steerAngleClamp);
+
+            //add new steer change to rotSpeed
+            rotSpeed = math.clamp(rotSpeed + steerAngle - prevStearAngle, -maxRotSpeed, maxRotSpeed);
+
+            transform.localRotation = Quaternion.Euler(rotDirection * steerAngle);
         }
         else
         {
@@ -163,54 +204,127 @@ public class WheelInteractable : Interactable
 
             if (cWaveSteerResetTime >= cWaveSteerResetInterval)
             {
-                cWaveSteerResetInterval = EzRandom.Range(waveResetSteerIntervalMin, waveResetSteerIntervalMax);
+                cWaveSteerResetInterval = EzRandom.Range(waveResetSteerInterval);
 
-                cWaveSteerPower = EzRandom.Range(waveResetSteerPowerMin, waveResetSteerPowerMax);
+                cWaveSteerPower = EzRandom.Range(waveResetSteerPower);
 
                 cWaveSteerResetTime = 0;
             }
 
             WaveUpdateSteeringWheel();
 
-            DecayRotSpeed();
+            UpdateRotation();
         }
 
-        UpdateRotation();
+        DecayRotSpeed();
+
+        float boatRot = steerAngle == 0 ? 0 : steerAngle / steerAngleClamp;
+
+        boatTransform.Rotate(Vector3.up, boatRot * boatSteerSpeed * Time.deltaTime);
     }
 
 
-    private void SnapHandToTransform(Vector3 wheelPos, Vector3 handTransformPos)
+    private bool SnapHandToClosestWheelPinPoint(Hand hand)
     {
-        float handDistanceToTransform = Vector3.Distance(transform.position, handTransformPos);
+        Vector3 handPos = hand.interactionController.transform.position;
 
-        if (handDistanceToTransform > interactionRange)
+        float closestDist = float.MaxValue;
+        float dist;
+        int targetIndex = 0;
+
+        for (int i = 0; i < handPinPoints.Length; i++)
         {
-            Hand.Left.vrHandAnimator.ResetHandTransform();
-            Hand.Right.vrHandAnimator.ResetHandTransform();
+            dist = Vector3.Distance(CalculateWheelPinPoint(i), handPos);
 
-            connectedHand.isHoldingObject = false;
-            connectedHand = null;
-            heldByPlayer = false;
+            if (dist < closestDist && dist < pinPointMaxRange)
+            {
+                closestDist = dist;
+                targetIndex = i;
+            }
+        }
+
+        //if no pinPoint is in range, return false
+        if (targetIndex == -1) return false;
+
+
+        //otherwise save closest pinPoint index
+        if (hand.isLeftHand)
+        {
+            leftHandPinPointIndex = targetIndex;
+            leftHandPrevLocalPos = handPos - boatTransform.position;
+
+            hand.vrHandAnimator.UpdateHandTransform(CalculateWheelPinPoint(targetIndex));
         }
         else
         {
-            Vector3 handPos = connectedHand.hand.vrHandAnimator.transform.position;
+            rightHandPinPointIndex = targetIndex;
+            rightHandPrevLocalPos = handPos - boatTransform.position;
 
-            if (turnOnAxis.HasFlag(SingleTurnConstraints.X))
-            {
-                handPos.x = wheelPos.x;
-            }
-            else if (turnOnAxis.HasFlag(SingleTurnConstraints.Y))
-            {
-                handPos.y = wheelPos.y;
-            }
-            else if (turnOnAxis.HasFlag(SingleTurnConstraints.Z))
-            {
-                handPos.z = wheelPos.z;
-            }
-
-            connectedHand.hand.vrHandAnimator.UpdateHandTransform(handPos);
+            hand.vrHandAnimator.UpdateHandTransform(CalculateWheelPinPoint(targetIndex));
         }
+
+        return true;
+    }
+
+    private bool UpdateHandPosition(Hand hand, Vector3 wheelpos)
+    {
+        bool isLeftHand = hand.isLeftHand;
+
+        Vector3 targetPos = CalculateWheelPinPoint(isLeftHand ? leftHandPinPointIndex : rightHandPinPointIndex);
+
+        if (Vector3.Distance(hand.interactionController.transform.position, targetPos) > pinPointMaxRange)
+        {
+            hand.interactionController.ForceDrop();
+
+            return false;
+        }
+        else
+        {
+            Vector3 toWheelCenter = (wheelpos - targetPos).normalized;
+            Quaternion handRotation = Quaternion.LookRotation(toWheelCenter, transform.up);
+
+            hand.vrHandAnimator.UpdateHandTransform(targetPos, handRotation);
+
+            return true;
+        }
+    }
+
+    private float ApplyHandRotation(Vector3 wheelPos, Vector3 currentPos, Vector3 previousPos)
+    {
+        Vector3 toHandCurrent = currentPos - (wheelPos - boatTransform.position);
+        Vector3 toHandPrevious = previousPos - (wheelPos - boatTransform.position);
+
+        Vector3 axisVector = GetAxisVector(turnOnAxis);
+        toHandCurrent = Vector3.ProjectOnPlane(toHandCurrent, axisVector);
+        toHandPrevious = Vector3.ProjectOnPlane(toHandPrevious, axisVector);
+
+        // Calculate the angle between the two hand positions around the wheel's center
+        float angleDelta = Vector3.Angle(toHandPrevious, toHandCurrent);
+
+        // Calculate the direction of the rotation (clockwise or counterclockwise)
+        Vector3 crossProduct = Vector3.Cross(toHandPrevious, toHandCurrent);
+        float sign = (Vector3.Dot(crossProduct, axisVector) > 0) ? 1 : -1;
+
+        // Return the signed angle delta for rotation
+        return sign * angleDelta;
+    }
+
+    private Vector3 GetAxisVector(SingleTurnConstraints axis)
+    {
+        switch (axis)
+        {
+            case SingleTurnConstraints.X: return transform.right;
+            case SingleTurnConstraints.Y: return transform.up;
+            case SingleTurnConstraints.Z: return transform.forward;
+            default: return Vector3.zero;
+        }
+    }
+
+
+
+    private Vector3 CalculateWheelPinPoint(int targetIndex)
+    {
+        return transform.TransformPoint(handPinPoints[targetIndex].normalized * pinPointDist);
     }
 
     private void WaveUpdateSteeringWheel()
@@ -227,24 +341,66 @@ public class WheelInteractable : Interactable
     {
         steerAngle = Mathf.Clamp(steerAngle + rotSpeed * Time.deltaTime, -steerAngleClamp, steerAngleClamp);
 
-        transform.rotation = Quaternion.Euler(rotDirection * steerAngle);
+        transform.localRotation = Quaternion.Euler(rotDirection * steerAngle);
     }
 
 
+#if UNITY_EDITOR
 
+    [SerializeField] private InteractionController DEBUG_hand;
+    [SerializeField] private int selecedPinPoint;
 
-    private void OnDestroy()
+    public float boatRotSpeedFormulaMultiplier;
+    public float DEBUG_boatRotSpeed;
+    public float DEBUG_wheelRotSpeed;
+    public float DEBUG_sumOutput;
+
+    protected override void OnDrawGizmos()
     {
-        UpdateScheduler.Unregister(OnUpdate);
-    }
+        base.OnDrawGizmos();
 
-
-    private void OnDrawGizmosSelected()
-    {
         for (int i = 0; i < handPinPoints.Length; i++)
         {
-            Gizmos.DrawLine(transform.position, transform.position + handPinPoints[i].normalized * pinPointDist);
-            Gizmos.DrawWireSphere(transform.position + handPinPoints[i].normalized * pinPointDist, 0.05f);
+            Gizmos.DrawLine(transform.position, CalculateWheelPinPoint(i));
+
+            Gizmos.DrawWireSphere(CalculateWheelPinPoint(i), 0.05f);
         }
+
+        Vector3 handPos = DEBUG_hand.transform.position;
+
+        float closestDist = float.MaxValue;
+        float dist;
+        selecedPinPoint = -1;
+
+        for (int i = 0; i < handPinPoints.Length; i++)
+        {
+            dist = Vector3.Distance(CalculateWheelPinPoint(i), handPos);
+
+            if (dist < closestDist && dist < pinPointMaxRange)
+            {
+                closestDist = dist;
+                selecedPinPoint = i;
+            }
+        }
+
+        Gizmos.color = Color.red;
+        if (selecedPinPoint == -1)
+        {
+            Gizmos.DrawWireSphere(CalculateWheelPinPoint(0), 0.05f);
+
+            return;
+        }
+
+        Gizmos.color = Color.green;
+
+        Gizmos.DrawWireSphere(CalculateWheelPinPoint(selecedPinPoint), 0.05f);
     }
+
+    [ContextMenu("Grab")]
+    private void GrabWheel()
+    {
+        DEBUG_hand.DEBUG_ForcePickup(this);
+    }
+
+#endif
 }

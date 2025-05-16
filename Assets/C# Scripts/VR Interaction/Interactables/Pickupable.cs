@@ -88,9 +88,9 @@ public class Pickupable : Interactable
 
 
     [BurstCompile]
-    public override void Throw(float3 velocity, float3 angularVelocity)
+    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
-        base.Throw(velocity, angularVelocity);
+        base.Throw(handType, velocity, angularVelocity);
 
         TogglePhysics(true);
 
@@ -122,9 +122,9 @@ public class Pickupable : Interactable
 
 
     [BurstCompile]
-    public override void Drop()
+    public override void Drop(HandType handType)
     {
-        base.Drop();
+        base.Drop(handType);
 
         TogglePhysics(true);
 

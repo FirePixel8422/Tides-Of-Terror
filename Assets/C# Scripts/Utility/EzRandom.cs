@@ -32,16 +32,28 @@ public static class EzRandom
     {
         return random.NextInt(min, max);
     }
+    public static int Range(MinMaxInt value)
+    {
+        return random.NextInt(value.min, value.max);
+    }
+
 
     public static uint Range(uint min, uint max)
     {
         return random.NextUInt(min, max);
     }
 
+
     public static float Range(float min, float max)
     {
         return random.NextFloat(min, max);
     }
+
+    public static float Range(MinMaxFloat value)
+    {
+        return random.NextFloat(value.min, value.max);
+    }
+
 
     public static Vector3 Range(Vector3 min, Vector3 max)
     {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+[RequireComponent(typeof(Animator))]
 public class VRHandAnimator : MonoBehaviour
 {
     private Animator anim;
@@ -42,7 +44,7 @@ public class VRHandAnimator : MonoBehaviour
 
 
 
-    public void UpdateHandTransform(Vector3 pos, Quaternion rot, bool flipHand)
+    public void UpdateHandTransform(Vector3 pos, Quaternion rot, bool flipHand = false)
     {
         Quaternion targetRot = rot;
         if (flipHand)

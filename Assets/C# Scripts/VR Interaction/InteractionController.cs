@@ -315,11 +315,11 @@ public class InteractionController : MonoBehaviour
                 angularVelocity += savedAngularVelocity[i] / maxFrames;
             }
 
-            heldObject.Throw(velocity, angularVelocity);
+            heldObject.Throw(hand.handType, velocity, angularVelocity);
         }
         else
         {
-            heldObject.Drop();
+            heldObject.Drop(hand.handType);
         }
 
         heldObject = null;
@@ -330,7 +330,7 @@ public class InteractionController : MonoBehaviour
     {
         if (isHoldingObject)
         {
-            heldObject.Drop();
+            heldObject.Drop(hand.handType);
 
             heldObject = null;
             isHoldingObject = false;
@@ -380,12 +380,11 @@ public class InteractionController : MonoBehaviour
 
     private void SampleVelocity()
     {
-        // Safely capture Unity values on main thread context
         float3 currentLocalPos = transform.localPosition;
         float3 currentBodyPos = bodyMovementTransform.localPosition;
 
         Quaternion currentRotation = transform.rotation;
-        Quaternion currentBodyRot = bodyMovementTransform.rotation;
+        Quaternion currentBodyRot = bodyMovementTransform.localRotation;
 
         float deltaTime = msVelSaveInterval * 0.001f;
 
@@ -421,4 +420,15 @@ public class InteractionController : MonoBehaviour
     }
 
     #endregion
+
+
+
+
+    public void DEBUG_ForcePickup(Interactable toPickupObject)
+    {
+        toPickupObject.Pickup(this);
+
+        heldObject = toPickupObject;
+        isHoldingObject = true;
+    }
 }

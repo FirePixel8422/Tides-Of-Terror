@@ -24,11 +24,6 @@ public class Hand : MonoBehaviour
     }
 
     public HandType handType;
-    public enum HandType
-    {
-        Left,
-        Right,
-    };
 
     #endregion
 

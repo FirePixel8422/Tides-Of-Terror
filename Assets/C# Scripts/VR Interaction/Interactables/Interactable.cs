@@ -66,7 +66,7 @@ public class Interactable : MonoBehaviour
 
 
     [BurstCompile]
-    public virtual void Throw(float3 velocity, float3 angularVelocity)
+    public virtual void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
         connectedHand = null;
         heldByPlayer = false;
@@ -76,7 +76,7 @@ public class Interactable : MonoBehaviour
 
 
     [BurstCompile]
-    public virtual void Drop()
+    public virtual void Drop(HandType handType)
     {
         connectedHand = null;
         heldByPlayer = false;
