@@ -90,6 +90,8 @@ public class XRMovementController : MonoBehaviour
 
             transform.localRotation = Quaternion.Euler(0, yRotation, 0f);
             turnTransform.localRotation = Quaternion.Euler(xRotation, 0, 0f);
+
+            return;
         }
 #endif
 

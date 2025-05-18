@@ -27,6 +27,12 @@ public static class EzRandom
         random = new Unity.Mathematics.Random(seed);
     }
 
+    /// <returns>True or false</returns>
+    public static bool CoinFlip()
+    {
+        return random.NextBool();
+    }
+
 
     public static int Range(int min, int max)
     {
@@ -47,6 +53,16 @@ public static class EzRandom
     public static float Range(float min, float max)
     {
         return random.NextFloat(min, max);
+    }
+
+    public static float Range01()
+    {
+        return random.NextFloat(0, 1);
+    }
+
+    public static bool Chance(float chance)
+    {
+        return chance > random.NextFloat(0, 100);
     }
 
     public static float Range(MinMaxFloat value)

@@ -3,44 +3,53 @@ using UnityEngine;
 
 public class WheelInteractable : Interactable
 {
+    [SerializeField] private Transform boatTransform;
+
     [Header("What axis can this interactable turn?")]
     [SerializeField] private SingleTurnConstraints turnOnAxis;
 
+    [Header("How much degrees per second does boat rotate at full steer (L/R)")]
+    [SerializeField] private float boatSteerSpeed = 1;
 
-    [SerializeField] private Transform boatTransform;
-    [SerializeField] private float boatSteerSpeed;
-
-
+    [Header("Pinpoints where the hands clip onto when the wheel is held")]
     [SerializeField] private Vector3[] handPinPoints;
-    [SerializeField] private float pinPointDist;
+    [SerializeField] private float pinPointDist = 1;
 
-    [SerializeField] private float pinPointMaxRange;
+    [SerializeField] private float pinPointMaxRange = 0.5f;
 
-    [SerializeField] private float minReqWheelAngleForDetection;
+    [SerializeField] private float steerAngle;
+    [SerializeField] private float steerAngleClamp = 360;
 
-
+    [Header("Max rotational power of the wheel and rot power decay speed")]
     [SerializeField] private float rotSpeed;
-    [SerializeField] private float maxRotSpeed;
-    [SerializeField] private float rotDecayPercent;
+    [SerializeField] private float maxRotSpeed = 200;
+    [SerializeField] private float rotDecayPercent = 0.2f;
 
-    [SerializeField] private MinMaxFloat waveResetSteerInterval;
-    [SerializeField] private MinMaxFloat waveResetSteerPower;
+    [Header("1 divided by how much time for wheel to fully spin back to center")]
+    [SerializeField] private float centeringStrength = 0.1f;
+
+    [Header("How often and how hard should tiny waves affect the wheel")]
+    [SerializeField] private MinMaxFloat waveResetSteerInterval = new MinMaxFloat(1, 3);
+    [SerializeField] private MinMaxFloat waveResetSteerPower = new MinMaxFloat(-3, 3);
+
+    [Header("How often and how hard should a random hard wave spin the wheel")]
+    [SerializeField] private float heavyWaveChance = 10;
+    [SerializeField] private float heavyWaveInterval = 15;
+    [SerializeField] private MinMaxFloat heavyWavePower = new MinMaxFloat(50, 125);
 
     private float cWaveSteerPower;
     private float cWaveSteerResetTime;
     private float cWaveSteerResetInterval;
 
-    [SerializeField] private float steerAngleClamp;
-
+    private float cHeavyWaveTime;
 
     private Vector3 rotDirection;
-    [SerializeField] private float steerAngle;
 
     private Hand leftHand;
     private Hand rightHand;
 
-    [SerializeField] private int leftHandPinPointIndex = -1;
-    [SerializeField] private int rightHandPinPointIndex = -1;
+    private int leftHandPinPointIndex = -1;
+    private int rightHandPinPointIndex = -1;
 
     private Vector3 leftHandPrevLocalPos;
     private Vector3 rightHandPrevLocalPos;
@@ -160,6 +169,8 @@ public class WheelInteractable : Interactable
 
     private void OnUpdate()
     {
+        float deltaTime = Time.deltaTime;
+
         if (heldByPlayer)
         {
             Quaternion boatRot = boatTransform.rotation;
@@ -167,14 +178,14 @@ public class WheelInteractable : Interactable
 
             Vector3 wheelpos = transform.position;
 
-            float newRotSpeed = 0;
+            float addedRotSpeed = 0;
 
             if (leftHandPinPointIndex != -1)
             {
                 if (UpdateHandPosition(leftHand, wheelpos))
                 {
                     Vector3 newHandLocalPos = leftHand.interactionController.transform.position;
-                    newRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, leftHandPrevLocalPos);
+                    addedRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, leftHandPrevLocalPos);
                     leftHandPrevLocalPos = newHandLocalPos;
                 }
             }
@@ -184,16 +195,22 @@ public class WheelInteractable : Interactable
                 if (UpdateHandPosition(rightHand, wheelpos))
                 {
                     Vector3 newHandLocalPos = rightHand.interactionController.transform.position;
-                    newRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, rightHandPrevLocalPos);
+                    addedRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, rightHandPrevLocalPos);
                     rightHandPrevLocalPos = newHandLocalPos;
                 }
             }
 
-            rotSpeed += newRotSpeed;
+            //if both hands are on the wheel, they both contriubute half to the rotation
+            if (rightHandPinPointIndex != -1 && leftHandPinPointIndex != -1)
+            {
+                addedRotSpeed *= 0.5f;
+            }
+
+            rotSpeed += addedRotSpeed;
 
             float prevStearAngle = steerAngle;
 
-            steerAngle = math.clamp(steerAngle + newRotSpeed, -steerAngleClamp, steerAngleClamp);
+            steerAngle = math.clamp(steerAngle + addedRotSpeed, -steerAngleClamp, steerAngleClamp);
 
             //add new steer change to rotSpeed
             rotSpeed = math.clamp(rotSpeed + steerAngle - prevStearAngle, -maxRotSpeed, maxRotSpeed);
@@ -204,8 +221,8 @@ public class WheelInteractable : Interactable
         }
         else
         {
-            cWaveSteerResetTime += Time.deltaTime;
-
+            cWaveSteerResetTime += deltaTime;
+            //if cWaveSteerResetTime is greater than the interval, reset the interval and set a new interval and wave power
             if (cWaveSteerResetTime >= cWaveSteerResetInterval)
             {
                 cWaveSteerResetInterval = EzRandom.Range(waveResetSteerInterval);
@@ -215,8 +232,24 @@ public class WheelInteractable : Interactable
                 cWaveSteerResetTime = 0;
             }
 
-            WaveUpdateSteeringWheel();
+            cHeavyWaveTime += deltaTime;
+            if (cHeavyWaveTime >= heavyWaveInterval)
+            {
+                //if random chance happends > apply heavy wave to rotational power of the wheel
+                if (EzRandom.Chance(heavyWaveChance))
+                {
+                    bool rotDirectionRight = EzRandom.CoinFlip();
 
+                    float rotationalPower = EzRandom.Range(heavyWavePower);
+
+                    rotSpeed += rotDirectionRight ? rotationalPower : -rotationalPower;
+                }
+
+                cHeavyWaveTime = 0;
+            }
+
+            WaveUpdateSteeringWheel();
+        
             UpdateRotation();
         }
 
@@ -224,7 +257,7 @@ public class WheelInteractable : Interactable
 
         float boatRotY = steerAngle == 0 ? 0 : steerAngle / steerAngleClamp;
 
-        boatTransform.Rotate(Vector3.up, boatRotY * boatSteerSpeed * Time.deltaTime);
+        boatTransform.Rotate(Vector3.up, boatRotY * boatSteerSpeed * deltaTime);
     }
 
 
@@ -339,6 +372,8 @@ public class WheelInteractable : Interactable
     private void WaveUpdateSteeringWheel()
     {
         steerAngle += cWaveSteerPower * Time.deltaTime;
+
+        steerAngle = Mathf.Lerp(steerAngle, 0f, centeringStrength * Time.deltaTime);
     }
 
     private void DecayRotSpeed()
@@ -355,6 +390,8 @@ public class WheelInteractable : Interactable
 
 
 #if UNITY_EDITOR
+
+    [Space(12)]
 
     [SerializeField] private InteractionController DEBUG_handL;
     [SerializeField] private InteractionController DEBUG_handR;
