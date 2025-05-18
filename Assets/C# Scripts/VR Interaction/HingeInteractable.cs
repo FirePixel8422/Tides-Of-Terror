@@ -143,7 +143,7 @@ public class HingeInteractable : Interactable
 
 
 
-    protected override void OnDrawGizmos()
+    protected override void OnDrawGizmosSelected()
     {
         Gizmos.DrawCube(transform.position, Vector3.one * 0.1f);
     }

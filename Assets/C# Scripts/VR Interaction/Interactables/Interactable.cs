@@ -107,7 +107,7 @@ public class Interactable : MonoBehaviour
     }
 
 
-    protected virtual void OnDrawGizmos()
+    protected virtual void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, objectSize);
     }

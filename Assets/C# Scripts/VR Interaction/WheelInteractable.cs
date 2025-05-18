@@ -14,7 +14,6 @@ public class WheelInteractable : Interactable
     [SerializeField] private Vector3[] handPinPoints;
     [SerializeField] private float pinPointDist;
 
-    [SerializeField] private float interactionRange;
     [SerializeField] private float pinPointMaxRange;
 
     [SerializeField] private float minReqWheelAngleForDetection;
@@ -40,8 +39,8 @@ public class WheelInteractable : Interactable
     private Hand leftHand;
     private Hand rightHand;
 
-    private int leftHandPinPointIndex = -1;
-    private int rightHandPinPointIndex = -1;
+    [SerializeField] private int leftHandPinPointIndex = -1;
+    [SerializeField] private int rightHandPinPointIndex = -1;
 
     private Vector3 leftHandPrevLocalPos;
     private Vector3 rightHandPrevLocalPos;
@@ -163,6 +162,9 @@ public class WheelInteractable : Interactable
     {
         if (heldByPlayer)
         {
+            Quaternion boatRot = boatTransform.rotation;
+            boatTransform.rotation = Quaternion.identity;
+
             Vector3 wheelpos = transform.position;
 
             float newRotSpeed = 0;
@@ -171,7 +173,7 @@ public class WheelInteractable : Interactable
             {
                 if (UpdateHandPosition(leftHand, wheelpos))
                 {
-                    Vector3 newHandLocalPos = leftHand.interactionController.transform.position - boatTransform.position;
+                    Vector3 newHandLocalPos = leftHand.interactionController.transform.position;
                     newRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, leftHandPrevLocalPos);
                     leftHandPrevLocalPos = newHandLocalPos;
                 }
@@ -181,7 +183,7 @@ public class WheelInteractable : Interactable
             {
                 if (UpdateHandPosition(rightHand, wheelpos))
                 {
-                    Vector3 newHandLocalPos = rightHand.interactionController.transform.position - boatTransform.position;
+                    Vector3 newHandLocalPos = rightHand.interactionController.transform.position;
                     newRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, rightHandPrevLocalPos);
                     rightHandPrevLocalPos = newHandLocalPos;
                 }
@@ -197,6 +199,8 @@ public class WheelInteractable : Interactable
             rotSpeed = math.clamp(rotSpeed + steerAngle - prevStearAngle, -maxRotSpeed, maxRotSpeed);
 
             transform.localRotation = Quaternion.Euler(rotDirection * steerAngle);
+
+            boatTransform.rotation = boatRot;
         }
         else
         {
@@ -218,14 +222,17 @@ public class WheelInteractable : Interactable
 
         DecayRotSpeed();
 
-        float boatRot = steerAngle == 0 ? 0 : steerAngle / steerAngleClamp;
+        float boatRotY = steerAngle == 0 ? 0 : steerAngle / steerAngleClamp;
 
-        boatTransform.Rotate(Vector3.up, boatRot * boatSteerSpeed * Time.deltaTime);
+        boatTransform.Rotate(Vector3.up, boatRotY * boatSteerSpeed * Time.deltaTime);
     }
 
 
     private bool SnapHandToClosestWheelPinPoint(Hand hand)
     {
+        Quaternion boatRot = boatTransform.rotation;
+        boatTransform.rotation = Quaternion.identity;
+
         Vector3 handPos = hand.interactionController.transform.position;
 
         float closestDist = float.MaxValue;
@@ -251,17 +258,19 @@ public class WheelInteractable : Interactable
         if (hand.isLeftHand)
         {
             leftHandPinPointIndex = targetIndex;
-            leftHandPrevLocalPos = handPos - boatTransform.position;
+            leftHandPrevLocalPos = handPos;
 
             hand.vrHandAnimator.UpdateHandTransform(CalculateWheelPinPoint(targetIndex));
         }
         else
         {
             rightHandPinPointIndex = targetIndex;
-            rightHandPrevLocalPos = handPos - boatTransform.position;
+            rightHandPrevLocalPos = handPos;
 
             hand.vrHandAnimator.UpdateHandTransform(CalculateWheelPinPoint(targetIndex));
         }
+
+        boatTransform.rotation = boatRot;
 
         return true;
     }
@@ -291,8 +300,8 @@ public class WheelInteractable : Interactable
 
     private float ApplyHandRotation(Vector3 wheelPos, Vector3 currentPos, Vector3 previousPos)
     {
-        Vector3 toHandCurrent = currentPos - (wheelPos - boatTransform.position);
-        Vector3 toHandPrevious = previousPos - (wheelPos - boatTransform.position);
+        Vector3 toHandCurrent = currentPos - wheelPos;
+        Vector3 toHandPrevious = previousPos - wheelPos;
 
         Vector3 axisVector = GetAxisVector(turnOnAxis);
         toHandCurrent = Vector3.ProjectOnPlane(toHandCurrent, axisVector);
@@ -347,30 +356,39 @@ public class WheelInteractable : Interactable
 
 #if UNITY_EDITOR
 
-    [SerializeField] private InteractionController DEBUG_hand;
-    [SerializeField] private int selecedPinPoint;
+    [SerializeField] private InteractionController DEBUG_handL;
+    [SerializeField] private InteractionController DEBUG_handR;
 
-    public float boatRotSpeedFormulaMultiplier;
-    public float DEBUG_boatRotSpeed;
-    public float DEBUG_wheelRotSpeed;
-    public float DEBUG_sumOutput;
-
-    protected override void OnDrawGizmos()
+    protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmos();
+        base.OnDrawGizmosSelected();
 
         for (int i = 0; i < handPinPoints.Length; i++)
         {
             Gizmos.DrawLine(transform.position, CalculateWheelPinPoint(i));
 
-            Gizmos.DrawWireSphere(CalculateWheelPinPoint(i), 0.05f);
+            Gizmos.DrawWireSphere(CalculateWheelPinPoint(i), pinPointMaxRange * 0.5f);
         }
 
-        Vector3 handPos = DEBUG_hand.transform.position;
+        Gizmos.color = Color.green;
+        Vector3 pos;
 
+        if (DEBUG_handL != null && DrawHandPinPointGizmo(DEBUG_handL.transform.position, out pos))
+        {
+            Gizmos.DrawWireSphere(pos, pinPointMaxRange * 0.5f);
+        }
+
+        if (DEBUG_handR != null && DrawHandPinPointGizmo(DEBUG_handR.transform.position, out pos))
+        {
+            Gizmos.DrawWireSphere(pos, pinPointMaxRange * 0.5f);
+        }
+    }
+
+    private bool DrawHandPinPointGizmo(Vector3 handPos, out Vector3 gizmoSpherePos)
+    {
         float closestDist = float.MaxValue;
         float dist;
-        selecedPinPoint = -1;
+        int selecedPinPoint = -1;
 
         for (int i = 0; i < handPinPoints.Length; i++)
         {
@@ -383,23 +401,21 @@ public class WheelInteractable : Interactable
             }
         }
 
-        Gizmos.color = Color.red;
-        if (selecedPinPoint == -1)
+        if (selecedPinPoint != -1)
         {
-            Gizmos.DrawWireSphere(CalculateWheelPinPoint(0), 0.05f);
-
-            return;
+            gizmoSpherePos = CalculateWheelPinPoint(selecedPinPoint);
+            return true;
         }
 
-        Gizmos.color = Color.green;
-
-        Gizmos.DrawWireSphere(CalculateWheelPinPoint(selecedPinPoint), 0.05f);
+        gizmoSpherePos = Vector3.zero;
+        return false;
     }
 
     [ContextMenu("Grab")]
     private void GrabWheel()
     {
-        DEBUG_hand.DEBUG_ForcePickup(this);
+        DEBUG_handL.DEBUG_ForcePickup(this);
+        DEBUG_handR.DEBUG_ForcePickup(this);
     }
 
 #endif

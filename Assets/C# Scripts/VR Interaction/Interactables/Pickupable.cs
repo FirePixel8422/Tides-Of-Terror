@@ -152,17 +152,11 @@ public class Pickupable : Interactable
 #if UNITY_EDITOR
     public bool debugRBCenterOfMass;
 
-    protected override void OnDrawGizmos()
+    protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmos();
+        base.OnDrawGizmosSelected();
 
-        if (debugRBCenterOfMass == false)
-        {
-            return;
-        }
-
-        
-        if (TryGetComponent(out rb))
+        if (debugRBCenterOfMass && TryGetComponent(out rb))
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.03f); // Visualize center of mass
