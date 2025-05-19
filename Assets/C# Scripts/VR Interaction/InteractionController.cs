@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,24 +11,27 @@ public class InteractionController : MonoBehaviour
     [HideInInspector]
     public Hand hand;
 
-    public HandInteractionSettingsSO settings;
+    [SerializeField] private HandInteractionSettingsSO settings;
+    public HandInteractionSettingsSO Settings => settings;
 
 
+    [SerializeField] private Transform boatTransform;
     [SerializeField] private Transform rayTransform;
-
     [SerializeField] private Transform overlapSphereTransform;
 
-    public Transform heldItemHolder;
+
+    [SerializeField] private Transform heldItemHolder;
+    public Transform HeldItemHolder => heldItemHolder;
 
 
     private Interactable heldObject;
     public bool isHoldingObject;
 
     private Interactable toPickupObject;
-    public bool objectSelected;
+    private bool objectSelected;
 
-    public VrButton toClickButton;
-    public bool uiSelected;
+    private VrButton toClickButton;
+    private bool uiSelected;
 
 
     private Collider[] hitObjectsInSphere;
@@ -77,12 +78,8 @@ public class InteractionController : MonoBehaviour
             bodyMovementTransform = transform.root;
         }
 
-        maxFrames = Mathf.CeilToInt(msVelSaveTimeAmount / msVelSaveInterval);
-
         savedLocalVelocity = new float3[maxFrames];
         savedAngularVelocity = new float3[maxFrames];
-
-        StartVelocitySaveLoop();
     }
 
 
@@ -246,8 +243,6 @@ public class InteractionController : MonoBehaviour
     #endregion
 
 
-
-
     #region Select/Deselect Object
 
     private void SelectNewObject(Interactable new_ToPickupObject)
@@ -275,8 +270,6 @@ public class InteractionController : MonoBehaviour
     }
 
     #endregion
-
-
 
 
     #region Drop and Pickup
@@ -348,75 +341,58 @@ public class InteractionController : MonoBehaviour
     private float3 prevbodyTransformPos;
 
     private float3 prevTransformPos;
-    [SerializeField] private float3[] savedLocalVelocity;
+    private float3[] savedLocalVelocity;
 
-    private Quaternion prevRotation;
-    [SerializeField] private float3[] savedAngularVelocity;
+    private quaternion prevRotation;
+    private float3[] savedAngularVelocity;
 
-    [SerializeField] private int msVelSaveInterval = 1000 / 15;
-    [SerializeField] private int msVelSaveTimeAmount = 500;
-
-    [SerializeField] private int maxFrames;
-    [SerializeField] private int frameIndex;
+    [Range(1, 32)]
+    public int maxFrames;
+    private int frameIndex;
 
 
 
-    private void StartVelocitySaveLoop()
+    private void FixedUpdate()
     {
-#pragma warning disable CS4014
-        VelocitySaveLoop();
-#pragma warning restore CS4014
-    }
-
-    private async Task VelocitySaveLoop()
-    {
-        while (true)
+        //if you are holding something and it is throwable (Or "pickupsUseOldHandVel" is true), start doing velocity calculations
+        if (settings.pickupsUseOldHandVel || (heldObject != null && heldObject))
         {
-            SampleVelocity();
-
-            await Task.Delay(msVelSaveInterval);
+            CalculateHandVelocity();
         }
     }
 
-    private void SampleVelocity()
+    private void CalculateHandVelocity()
     {
-        float3 currentLocalPos = transform.localPosition;
-        float3 currentBodyPos = bodyMovementTransform.localPosition;
+        //store and remove boatTransform (parent) rotation influence
+        Quaternion boatRot = boatTransform.rotation;
+        boatTransform.transform.rotation = Quaternion.identity;
 
-        Quaternion currentRotation = transform.rotation;
-        Quaternion currentBodyRot = bodyMovementTransform.localRotation;
+        //Calculate velocity based on hand movement
+        savedLocalVelocity[frameIndex] = bodyMovementTransform.rotation * ((float3)transform.localPosition - prevTransformPos) * settings.throwVelocityMultiplier / Time.fixedDeltaTime;
 
-        float deltaTime = msVelSaveInterval * 0.001f;
+        prevTransformPos = transform.localPosition;
 
-        // Linear velocity
-        float3 handDelta = currentLocalPos - prevTransformPos;
-        float3 localVel = currentBodyRot * handDelta * settings.throwVelocityMultiplier / deltaTime;
-
-        // Add body movement velocity if enabled
+        //Add velocity based on player body
         if (settings.shouldThrowVelAddMovementVel)
         {
-            float3 bodyDelta = (float3)(currentBodyPos - prevbodyTransformPos);
-            localVel += bodyDelta / deltaTime;
+            savedLocalVelocity[frameIndex] += ((float3)bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.fixedDeltaTime;
+
+            prevbodyTransformPos = bodyMovementTransform.localPosition;
         }
 
-        // Store linear velocity
-        savedLocalVelocity[frameIndex] = localVel;
-
-        // Angular velocity
-        Quaternion deltaRotation = currentRotation * Quaternion.Inverse(prevRotation);
+        //Calculate Angular velocity based on hand rotation
+        Quaternion deltaRotation = transform.rotation * Quaternion.Inverse(prevRotation);
         deltaRotation.ToAngleAxis(out float angle, out Vector3 axis);
+
         if (angle > 180f) angle -= 360f;
+        savedAngularVelocity[frameIndex] = axis * (angle * Mathf.Deg2Rad / Time.fixedDeltaTime);
 
-        float3 angularVel = (float3)(axis * (angle * Mathf.Deg2Rad / deltaTime));
-        savedAngularVelocity[frameIndex] = angularVel;
+        prevRotation = transform.rotation;
 
-        // Move to next frame slot
         frameIndex = (frameIndex + 1) % maxFrames;
 
-        // Update previous values
-        prevTransformPos = currentLocalPos;
-        prevbodyTransformPos = currentBodyPos;
-        prevRotation = currentRotation;
+        //restore boat rotation
+        boatTransform.rotation = boatRot;
     }
 
     #endregion

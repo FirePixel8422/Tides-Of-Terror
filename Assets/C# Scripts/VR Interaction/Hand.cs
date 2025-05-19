@@ -31,15 +31,17 @@ public class Hand : MonoBehaviour
     public bool isRightHand => handType == HandType.Right;
 
 
-    public InteractionController interactionController;
-    public VRHandAnimator vrHandAnimator;
+    [HideInInspector] public InteractionController interactionController;
+    [HideInInspector] public VRHandAnimator vrHandAnimator;
 
     private HapticImpulsePlayer hapticImpulsePlayer;
 
 
     private void Start()
     {
+        interactionController = GetComponent<InteractionController>();
         hapticImpulsePlayer = GetComponent<HapticImpulsePlayer>();
+        vrHandAnimator = GetComponentInChildren<VRHandAnimator>();
     }
 
 

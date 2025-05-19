@@ -11,9 +11,12 @@ public class WheelInteractable : Interactable
     [Header("How much degrees per second does boat rotate at full steer (L/R)")]
     [SerializeField] private float boatSteerSpeed = 1;
 
-    [Header("Pinpoints where the hands clip onto when the wheel is held")]
+    [Header("Pinpoints where the hands clip onto when the wheel is held and rotation offset")]
     [SerializeField] private Vector3[] handPinPoints;
     [SerializeField] private float pinPointDist = 1;
+
+    [SerializeField] private Quaternion handRotOffset = Quaternion.identity;
+    [SerializeField] private Vector3 handPosOffset = Vector3.zero;
 
     [SerializeField] private float pinPointMaxRange = 0.5f;
 
@@ -22,6 +25,7 @@ public class WheelInteractable : Interactable
 
     [Header("Max rotational power of the wheel and rot power decay speed")]
     [SerializeField] private float rotSpeed;
+    [SerializeField] private float wheelSpinPower = 5;
     [SerializeField] private float maxRotSpeed = 200;
     [SerializeField] private float rotDecayPercent = 0.2f;
 
@@ -174,7 +178,8 @@ public class WheelInteractable : Interactable
         if (heldByPlayer)
         {
             Quaternion boatRot = boatTransform.rotation;
-            boatTransform.rotation = Quaternion.identity;
+            Vector3 boatPos = boatTransform.position;
+            boatTransform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 
             Vector3 wheelpos = transform.position;
 
@@ -182,7 +187,7 @@ public class WheelInteractable : Interactable
 
             if (leftHandPinPointIndex != -1)
             {
-                if (UpdateHandPosition(leftHand, wheelpos))
+                if (UpdateHandTransform(leftHand, wheelpos))
                 {
                     Vector3 newHandLocalPos = leftHand.interactionController.transform.position;
                     addedRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, leftHandPrevLocalPos);
@@ -192,7 +197,7 @@ public class WheelInteractable : Interactable
 
             if (rightHandPinPointIndex != -1)
             {
-                if (UpdateHandPosition(rightHand, wheelpos))
+                if (UpdateHandTransform(rightHand, wheelpos))
                 {
                     Vector3 newHandLocalPos = rightHand.interactionController.transform.position;
                     addedRotSpeed += ApplyHandRotation(wheelpos, newHandLocalPos, rightHandPrevLocalPos);
@@ -213,11 +218,11 @@ public class WheelInteractable : Interactable
             steerAngle = math.clamp(steerAngle + addedRotSpeed, -steerAngleClamp, steerAngleClamp);
 
             //add new steer change to rotSpeed
-            rotSpeed = math.clamp(rotSpeed + steerAngle - prevStearAngle, -maxRotSpeed, maxRotSpeed);
+            rotSpeed = math.clamp(rotSpeed + (steerAngle - prevStearAngle) * wheelSpinPower / Time.deltaTime, -maxRotSpeed, maxRotSpeed);
 
             transform.localRotation = Quaternion.Euler(rotDirection * steerAngle);
 
-            boatTransform.rotation = boatRot;
+            boatTransform.SetPositionAndRotation(boatPos, boatRot);
         }
         else
         {
@@ -264,7 +269,8 @@ public class WheelInteractable : Interactable
     private bool SnapHandToClosestWheelPinPoint(Hand hand)
     {
         Quaternion boatRot = boatTransform.rotation;
-        boatTransform.rotation = Quaternion.identity;
+        Vector3 boatPos = boatTransform.position;
+        boatTransform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 
         Vector3 handPos = hand.interactionController.transform.position;
 
@@ -303,16 +309,16 @@ public class WheelInteractable : Interactable
             hand.vrHandAnimator.UpdateHandTransform(CalculateWheelPinPoint(targetIndex));
         }
 
-        boatTransform.rotation = boatRot;
+        boatTransform.SetPositionAndRotation(boatPos, boatRot);
 
         return true;
     }
 
-    private bool UpdateHandPosition(Hand hand, Vector3 wheelpos)
+    private bool UpdateHandTransform(Hand hand, Vector3 wheelpos)
     {
         bool isLeftHand = hand.isLeftHand;
 
-        Vector3 targetPos = CalculateWheelPinPoint(isLeftHand ? leftHandPinPointIndex : rightHandPinPointIndex);
+        Vector3 targetPos = CalculateWheelPinPoint(isLeftHand ? leftHandPinPointIndex : rightHandPinPointIndex) + handPosOffset;
 
         if (Vector3.Distance(hand.interactionController.transform.position, targetPos) > pinPointMaxRange)
         {
@@ -323,7 +329,12 @@ public class WheelInteractable : Interactable
         else
         {
             Vector3 toWheelCenter = (wheelpos - targetPos).normalized;
-            Quaternion handRotation = Quaternion.LookRotation(toWheelCenter, transform.up);
+            Quaternion handRotation = Quaternion.LookRotation(toWheelCenter, transform.up) * handRotOffset;
+
+            if (isLeftHand == false)
+            {
+                handRotation *= Quaternion.Euler(180, 180, 0);
+            }
 
             hand.vrHandAnimator.UpdateHandTransform(targetPos, handRotation);
 

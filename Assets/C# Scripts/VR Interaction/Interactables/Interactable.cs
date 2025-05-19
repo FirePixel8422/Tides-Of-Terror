@@ -100,9 +100,9 @@ public class Interactable : MonoBehaviour
 
     private void OnValidate()
     {
-        if (!Application.isPlaying && transform.TryFindObjectOfType(out Hand hand) && hand.interactionController.settings != null)
+        if (!Application.isPlaying && transform.TryFindObjectOfType(out Hand hand) && hand.interactionController.Settings != null)
         {
-            gameObject.layer = Mathf.RoundToInt(Mathf.Log(hand.interactionController.settings.interactablesLayer.value, 2));
+            gameObject.layer = Mathf.RoundToInt(Mathf.Log(hand.interactionController.Settings.interactablesLayer.value, 2));
         }
     }
 

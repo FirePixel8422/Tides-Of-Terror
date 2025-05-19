@@ -61,7 +61,7 @@ public class Pickupable : Interactable
 
         base.Pickup(handInteractor);
 
-        transform.SetParent(handInteractor.heldItemHolder, false, false);
+        transform.SetParent(handInteractor.HeldItemHolder, false, false);
 
         print("pickup: " + gameObject.name);
 
