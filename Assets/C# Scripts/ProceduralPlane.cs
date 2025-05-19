@@ -82,7 +82,9 @@ public class ProceduralSpherePlane : MonoBehaviour
         mesh.RecalculateBounds();
 
         MeshFilter filter = GetComponent<MeshFilter>();
+#pragma warning disable CS0618
         filter.sharedMesh = mesh;
+#pragma warning restore CS0618
 
         GetComponent<BoxCollider>().size = new Vector3(sphereDiameter, 0.001f, sphereDiameter);
     }

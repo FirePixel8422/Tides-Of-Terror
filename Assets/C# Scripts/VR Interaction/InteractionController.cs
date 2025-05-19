@@ -1,5 +1,8 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Unity.Burst;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -74,20 +77,17 @@ public class InteractionController : MonoBehaviour
             bodyMovementTransform = transform.root;
         }
 
-        savedLocalVelocity = new Vector3[frameAmount];
-        savedAngularVelocity = new Vector3[frameAmount];
+        maxFrames = Mathf.CeilToInt(msVelSaveTimeAmount / msVelSaveInterval);
+
+        savedLocalVelocity = new float3[maxFrames];
+        savedAngularVelocity = new float3[maxFrames];
+
+        StartVelocitySaveLoop();
     }
 
 
-    private void OnEnable()
-    {
-        UpdateScheduler.Register(OnUpdate);
-    }
-
-    private void OnDisable()
-    {
-        UpdateScheduler.Unregister(OnUpdate);
-    }
+    private void OnEnable() => UpdateScheduler.Register(OnUpdate);
+    private void OnDisable() => UpdateScheduler.Unregister(OnUpdate);
 
 
 
@@ -97,12 +97,6 @@ public class InteractionController : MonoBehaviour
         if (isHoldingObject == false)
         {
             UpdateToPickObject();
-        }
-
-        //if you are holding something and it is throwable (Or "pickupsUseOldHandVel" is true), start doing velocity calculations
-        if (settings.pickupsUseOldHandVel || (heldObject != null && heldObject))
-        {
-            CalculateHandVelocity();
         }
     }
 
@@ -309,23 +303,23 @@ public class InteractionController : MonoBehaviour
         //drop item if it is throwable
         if (heldObject.isThrowable)
         {
-            Vector3 velocity = Vector3.zero;
-            for (int i = 0; i < frameAmount; i++)
+            float3 velocity = float3.zero;
+            for (int i = 0; i < maxFrames; i++)
             {
-                velocity += savedLocalVelocity[i] / frameAmount;
+                velocity += savedLocalVelocity[i] / maxFrames;
             }
 
-            Vector3 angularVelocity = Vector3.zero;
-            for (int i = 0; i < frameAmount; i++)
+            float3 angularVelocity = float3.zero;
+            for (int i = 0; i < maxFrames; i++)
             {
-                angularVelocity += savedAngularVelocity[i] / frameAmount;
+                angularVelocity += savedAngularVelocity[i] / maxFrames;
             }
 
-            heldObject.Throw(velocity, angularVelocity);
+            heldObject.Throw(hand.handType, velocity, angularVelocity);
         }
         else
         {
-            heldObject.Drop();
+            heldObject.Drop(hand.handType);
         }
 
         heldObject = null;
@@ -336,7 +330,7 @@ public class InteractionController : MonoBehaviour
     {
         if (isHoldingObject)
         {
-            heldObject.Drop();
+            heldObject.Drop(hand.handType);
 
             heldObject = null;
             isHoldingObject = false;
@@ -351,54 +345,78 @@ public class InteractionController : MonoBehaviour
     #region CalculateHandVelocity
 
     private Transform bodyMovementTransform;
-    private Vector3 prevbodyTransformPos;
+    private float3 prevbodyTransformPos;
 
-    private Vector3 prevTransformPos;
-    private Vector3[] savedLocalVelocity;
+    private float3 prevTransformPos;
+    [SerializeField] private float3[] savedLocalVelocity;
 
     private Quaternion prevRotation;
-    private Vector3[] savedAngularVelocity;
+    [SerializeField] private float3[] savedAngularVelocity;
 
-    [Range(1, 32)]
-    public int frameAmount;
-    private int frameIndex;
+    [SerializeField] private int msVelSaveInterval = 1000 / 15;
+    [SerializeField] private int msVelSaveTimeAmount = 500;
+
+    [SerializeField] private int maxFrames;
+    [SerializeField] private int frameIndex;
 
 
 
-    private void CalculateHandVelocity()
+    private void StartVelocitySaveLoop()
     {
-        //Calculate velocity based on hand movement
-        savedLocalVelocity[frameIndex] = bodyMovementTransform.rotation * (transform.localPosition - prevTransformPos) * settings.throwVelocityMultiplier / Time.deltaTime;
+#pragma warning disable CS4014
+        VelocitySaveLoop();
+#pragma warning restore CS4014
+    }
 
-        prevTransformPos = transform.localPosition;
+    private async Task VelocitySaveLoop()
+    {
+        while (true)
+        {
+            SampleVelocity();
 
+            await Task.Delay(msVelSaveInterval);
+        }
+    }
 
-        //Add velocity based on player body
+    private void SampleVelocity()
+    {
+        float3 currentLocalPos = transform.localPosition;
+        float3 currentBodyPos = bodyMovementTransform.localPosition;
+
+        Quaternion currentRotation = transform.rotation;
+        Quaternion currentBodyRot = bodyMovementTransform.localRotation;
+
+        float deltaTime = msVelSaveInterval * 0.001f;
+
+        // Linear velocity
+        float3 handDelta = currentLocalPos - prevTransformPos;
+        float3 localVel = currentBodyRot * handDelta * settings.throwVelocityMultiplier / deltaTime;
+
+        // Add body movement velocity if enabled
         if (settings.shouldThrowVelAddMovementVel)
         {
-            savedLocalVelocity[frameIndex] += (bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.deltaTime;
-
-            prevbodyTransformPos = bodyMovementTransform.localPosition;
+            float3 bodyDelta = (float3)(currentBodyPos - prevbodyTransformPos);
+            localVel += bodyDelta / deltaTime;
         }
 
+        // Store linear velocity
+        savedLocalVelocity[frameIndex] = localVel;
 
-        //Calculate Angular velocity based on hand rotation
-        Quaternion deltaRotation = transform.rotation * Quaternion.Inverse(prevRotation);
+        // Angular velocity
+        Quaternion deltaRotation = currentRotation * Quaternion.Inverse(prevRotation);
         deltaRotation.ToAngleAxis(out float angle, out Vector3 axis);
-
         if (angle > 180f) angle -= 360f;
-        savedAngularVelocity[frameIndex] = axis * (angle * Mathf.Deg2Rad / Time.deltaTime);
 
-        prevRotation = transform.rotation;
+        float3 angularVel = (float3)(axis * (angle * Mathf.Deg2Rad / deltaTime));
+        savedAngularVelocity[frameIndex] = angularVel;
 
+        // Move to next frame slot
+        frameIndex = (frameIndex + 1) % maxFrames;
 
-
-
-        frameIndex += 1;
-        if (frameIndex == frameAmount)
-        {
-            frameIndex = 0;
-        }
+        // Update previous values
+        prevTransformPos = currentLocalPos;
+        prevbodyTransformPos = currentBodyPos;
+        prevRotation = currentRotation;
     }
 
     #endregion
@@ -406,24 +424,11 @@ public class InteractionController : MonoBehaviour
 
 
 
-    #region Spawn BasketBall in Hand
+    public void DEBUG_ForcePickup(Interactable toPickupObject)
+    {
+        toPickupObject.Pickup(this);
 
-    //public void TEMP_SpawnBall(InputAction.CallbackContext ctx)
-    //{
-    //    if (ctx.performed == false || heldObject != null)
-    //    {
-    //        return;
-    //    }
-
-    //    Interactable toPickupObject = BasketBallManager.Instance.RetrieveBasketBall();
-
-    //    toPickupObject.Pickup(this);
-
-    //    heldObject = toPickupObject;
-    //    isHoldingObject = true;
-
-    //    hand.SendVibration(settings.pickupVibrationParams);
-    //}
-
-    #endregion
+        heldObject = toPickupObject;
+        isHoldingObject = true;
+    }
 }

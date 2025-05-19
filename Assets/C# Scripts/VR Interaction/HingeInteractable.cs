@@ -43,18 +43,18 @@ public class HingeInteractable : Interactable
         base.Pickup(handInteractor);
     }
 
-    public override void Drop()
+    public override void Drop(HandType handType)
     {
         connectedHand.hand.vrHandAnimator.ResetHandTransform();
 
-        base.Drop();
+        base.Drop(handType);
     }
 
-    public override void Throw(Vector3 velocity, Vector3 angularVelocity)
+    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
         connectedHand.hand.vrHandAnimator.ResetHandTransform();
 
-        base.Throw(velocity, angularVelocity);
+        base.Throw(handType, velocity, angularVelocity);
     }
 
 
@@ -143,7 +143,7 @@ public class HingeInteractable : Interactable
 
 
 
-    protected override void OnDrawGizmos()
+    protected override void OnDrawGizmosSelected()
     {
         Gizmos.DrawCube(transform.position, Vector3.one * 0.1f);
     }

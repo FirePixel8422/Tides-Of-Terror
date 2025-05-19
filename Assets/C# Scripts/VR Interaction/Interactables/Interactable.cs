@@ -1,4 +1,5 @@
 using Unity.Burst;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -65,7 +66,7 @@ public class Interactable : MonoBehaviour
 
 
     [BurstCompile]
-    public virtual void Throw(Vector3 velocity, Vector3 angularVelocity)
+    public virtual void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
         connectedHand = null;
         heldByPlayer = false;
@@ -75,7 +76,7 @@ public class Interactable : MonoBehaviour
 
 
     [BurstCompile]
-    public virtual void Drop()
+    public virtual void Drop(HandType handType)
     {
         connectedHand = null;
         heldByPlayer = false;
@@ -106,7 +107,7 @@ public class Interactable : MonoBehaviour
     }
 
 
-    protected virtual void OnDrawGizmos()
+    protected virtual void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, objectSize);
     }

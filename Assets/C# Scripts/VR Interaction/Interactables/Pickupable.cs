@@ -18,24 +18,20 @@ public class Pickupable : Interactable
 
 
     [Header("How hard can you throw this object")]
-    public float throwVelocityMultiplier = 1;
+    [SerializeField] private float throwVelocityMultiplier = 1;
 
-    public RigidbodyConstraints onThrowConstraints = RigidbodyConstraints.None;
+    [Header("Does this object recieve angular verlocity when thrown?")]
+    [SerializeField] private bool useAngularVelocity = true;
 
     [Header("Max velocity on each axis (direction is kept)")]
-    public Vector3 velocityClamp = new Vector3(10, 10, 10);
+    [SerializeField] private float3 velocityClamp = new Vector3(10, 10, 10);
 
     [Header("Release object with 0 velocity of released with less then minRequiredVelocity")]
-    public float minRequiredVelocityXYZ = 0.065f;
+    [SerializeField] private float minRequiredVelocityXYZ = 0.065f;
 
-    [Header("How heavy against fracturable objects")]
-    public float weight = 1;
 
-    [HideInInspector]
-    public Rigidbody rb;
-
-    //[HideInInspector]
-    public Collider[] colliders;
+    private Rigidbody rb;
+    private Collider[] colliders;
 
 
 
@@ -43,8 +39,7 @@ public class Pickupable : Interactable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
         List<Collider> coll = GetComponents<Collider>().ToList();
         for (int i = 0; i < coll.Count; i++)
@@ -93,9 +88,9 @@ public class Pickupable : Interactable
 
 
     [BurstCompile]
-    public override void Throw(Vector3 velocity, Vector3 angularVelocity)
+    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
-        base.Throw(velocity, angularVelocity);
+        base.Throw(handType, velocity, angularVelocity);
 
         TogglePhysics(true);
 
@@ -105,19 +100,21 @@ public class Pickupable : Interactable
         rb.isKinematic = false;
 
 
-        Vector3 targetVelocity = velocity * throwVelocityMultiplier;
+        float3 targetVelocity = velocity * throwVelocityMultiplier;
 
         //only if velocity is MORE then minRequiredVelocityXYZ set rigidBody velocity to targetVelocity
         if (math.abs(targetVelocity.x) + math.abs(targetVelocity.y) + math.abs(targetVelocity.z) > minRequiredVelocityXYZ)
         {
-            rb.angularVelocity = angularVelocity;
-
+            if (useAngularVelocity)
+            {
+                rb.angularVelocity = angularVelocity;
+            }
 
             // Calculate the radius vector from the center of mass to the point
-            Vector3 radius = transform.position - rb.worldCenterOfMass;
+            float3 radius = transform.position - rb.worldCenterOfMass;
 
             // Calculate the linear velocity caused by angular velocity
-            Vector3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
+            float3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
 
             rb.velocity = VectorLogic.ClampDirection(targetVelocity + tangentialVelocity, velocityClamp);
         }
@@ -125,9 +122,9 @@ public class Pickupable : Interactable
 
 
     [BurstCompile]
-    public override void Drop()
+    public override void Drop(HandType handType)
     {
-        base.Drop();
+        base.Drop(handType);
 
         TogglePhysics(true);
 
@@ -139,15 +136,15 @@ public class Pickupable : Interactable
 
     public void TogglePhysics(bool state, bool keepColliders = false)
     {
-        //if (keepColliders == false)
-        //{
-        //    foreach (Collider coll in colliders)
-        //    {
-        //        coll.enabled = state;
-        //    }
-        //}
+        if (keepColliders == false)
+        {
+            foreach (Collider coll in colliders)
+            {
+                coll.enabled = state;
+            }
+        }
 
-        rb.constraints = state ? onThrowConstraints : RigidbodyConstraints.FreezeAll;
+        rb.constraints = state ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
     }
 
 
@@ -155,17 +152,11 @@ public class Pickupable : Interactable
 #if UNITY_EDITOR
     public bool debugRBCenterOfMass;
 
-    protected override void OnDrawGizmos()
+    protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmos();
+        base.OnDrawGizmosSelected();
 
-        if (debugRBCenterOfMass == false)
-        {
-            return;
-        }
-
-        
-        if (TryGetComponent(out rb))
+        if (debugRBCenterOfMass && TryGetComponent(out rb))
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.03f); // Visualize center of mass
