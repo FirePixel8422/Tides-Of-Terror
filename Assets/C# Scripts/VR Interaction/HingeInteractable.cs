@@ -85,7 +85,7 @@ public class HingeInteractable : Interactable
         {
             connectedHand.hand.vrHandAnimator.ResetHandTransform();
 
-            connectedHand.isHoldingObject = false;
+            connectedHand.objectHeld = false;
             connectedHand = null;
             heldByPlayer = false;
         }

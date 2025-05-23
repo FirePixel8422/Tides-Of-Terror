@@ -63,8 +63,6 @@ public class Pickupable : Interactable
 
         transform.SetParent(handInteractor.HeldItemHolder, false, false);
 
-        print("pickup: " + gameObject.name);
-
         TogglePhysics(false);
 
 
@@ -79,8 +77,8 @@ public class Pickupable : Interactable
 
         if (isRightHand)
         {
-            transform.localPosition = new Vector3(-transform.localPosition.x, -transform.localPosition.y, -transform.localPosition.z);
-            transform.localEulerAngles = new Vector3(-transform.localEulerAngles.x, -transform.localEulerAngles.y - 180, -transform.localEulerAngles.z);
+            transform.localPosition = new Vector3(-transform.localPosition.x, transform.localPosition.y, -transform.localPosition.z);
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y - 180, transform.localEulerAngles.z);
         }
 
         rb.isKinematic = true;
@@ -96,9 +94,7 @@ public class Pickupable : Interactable
 
         transform.parent = null;
 
-
         rb.isKinematic = false;
-
 
         float3 targetVelocity = velocity * throwVelocityMultiplier;
 

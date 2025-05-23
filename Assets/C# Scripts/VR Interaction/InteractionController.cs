@@ -25,9 +25,9 @@ public class InteractionController : MonoBehaviour
 
 
     private Interactable heldObject;
-    public bool isHoldingObject;
+    public bool objectHeld;
 
-    private Interactable toPickupObject;
+    [SerializeField] private Interactable toPickupObject;
     private bool objectSelected;
 
     private VrButton toClickButton;
@@ -53,13 +53,13 @@ public class InteractionController : MonoBehaviour
                 uiSelected = false;
             }
 
-            if (isHoldingObject == false && objectSelected)
+            if (objectHeld == false && objectSelected)
             {
                 Pickup(toPickupObject);
             }
         }
 
-        if (ctx.canceled && isHoldingObject)
+        if (ctx.canceled && objectHeld)
         {
             Drop();
         }
@@ -78,6 +78,8 @@ public class InteractionController : MonoBehaviour
             bodyMovementTransform = transform.root;
         }
 
+        maxFrames = (int)math.round(1 / Time.fixedDeltaTime * velocityRememberTime);
+
         savedLocalVelocity = new float3[maxFrames];
         savedAngularVelocity = new float3[maxFrames];
     }
@@ -91,7 +93,7 @@ public class InteractionController : MonoBehaviour
     private void OnUpdate()
     {
         //if you are holding nothing, scan for objects by using a raycast and a sphere around you hand
-        if (isHoldingObject == false)
+        if (objectHeld == false)
         {
             UpdateToPickObject();
         }
@@ -100,7 +102,7 @@ public class InteractionController : MonoBehaviour
 
 
 
-    #region UpdateToPickupObject
+    #region Update ToPickupObject
 
     private void UpdateToPickObject()
     {
@@ -285,7 +287,7 @@ public class InteractionController : MonoBehaviour
         toPickupObject.Pickup(this);
 
         heldObject = toPickupObject;
-        isHoldingObject = true;
+        objectHeld = true;
 
         hand.SendVibration(settings.pickupVibrationParams);
     }
@@ -316,17 +318,17 @@ public class InteractionController : MonoBehaviour
         }
 
         heldObject = null;
-        isHoldingObject = false;
+        objectHeld = false;
     }
 
     public void ForceDrop()
     {
-        if (isHoldingObject)
+        if (objectHeld)
         {
             heldObject.Drop(hand.handType);
 
             heldObject = null;
-            isHoldingObject = false;
+            objectHeld = false;
         }
     }
 
@@ -341,15 +343,14 @@ public class InteractionController : MonoBehaviour
     private float3 prevbodyTransformPos;
 
     private float3 prevTransformPos;
-    private float3[] savedLocalVelocity;
+    [SerializeField] private float3[] savedLocalVelocity;
 
     private quaternion prevRotation;
-    private float3[] savedAngularVelocity;
+    [SerializeField] private float3[] savedAngularVelocity;
 
-    [Range(1, 32)]
-    public int maxFrames;
+    [SerializeField] private float velocityRememberTime = 0.5f;
+    [SerializeField] private int maxFrames;
     private int frameIndex;
-
 
 
     private void FixedUpdate()
@@ -368,14 +369,14 @@ public class InteractionController : MonoBehaviour
         boatTransform.transform.rotation = Quaternion.identity;
 
         //Calculate velocity based on hand movement
-        savedLocalVelocity[frameIndex] = bodyMovementTransform.rotation * ((float3)transform.localPosition - prevTransformPos) * settings.throwVelocityMultiplier / Time.fixedDeltaTime;
+        savedLocalVelocity[frameIndex] = bodyMovementTransform.rotation * ((float3)transform.localPosition - prevTransformPos) * settings.throwVelocityMultiplier * Time.fixedDeltaTime;
 
         prevTransformPos = transform.localPosition;
 
         //Add velocity based on player body
         if (settings.shouldThrowVelAddMovementVel)
         {
-            savedLocalVelocity[frameIndex] += ((float3)bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.fixedDeltaTime;
+            savedLocalVelocity[frameIndex] += ((float3)bodyMovementTransform.localPosition - prevbodyTransformPos) * Time.fixedDeltaTime;
 
             prevbodyTransformPos = bodyMovementTransform.localPosition;
         }
@@ -385,7 +386,7 @@ public class InteractionController : MonoBehaviour
         deltaRotation.ToAngleAxis(out float angle, out Vector3 axis);
 
         if (angle > 180f) angle -= 360f;
-        savedAngularVelocity[frameIndex] = axis * (angle * Mathf.Deg2Rad / Time.fixedDeltaTime);
+        savedAngularVelocity[frameIndex] = axis * (angle * Mathf.Deg2Rad * Time.fixedDeltaTime);
 
         prevRotation = transform.rotation;
 
@@ -400,11 +401,62 @@ public class InteractionController : MonoBehaviour
 
 
 
-    public void DEBUG_ForcePickup(Interactable toPickupObject)
+
+#if UNITY_EDITOR
+
+    [SerializeField] private bool DEBUG_ControlMode;
+    [SerializeField] private float DEBUG_MoveSpeed = 1f;
+    private void Update()
     {
+        if (DEBUG_ControlMode == false) return;
+
+        float moveSpeed = DEBUG_MoveSpeed * Time.deltaTime;
+        Vector3 move = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.W)) move += transform.forward;
+        if (Input.GetKey(KeyCode.S)) move -= transform.forward;
+        if (Input.GetKey(KeyCode.A)) move -= transform.right;
+        if (Input.GetKey(KeyCode.D)) move += transform.right;
+        if (Input.GetKey(KeyCode.Q)) move -= transform.up;
+        if (Input.GetKey(KeyCode.E)) move += transform.up;
+
+        transform.position += move * moveSpeed;
+
+        if (Input.GetMouseButtonDown(0)) DEBUG_Pickup();
+        if (Input.GetMouseButtonUp(0) && objectHeld) Drop();
+    }
+
+
+    [ContextMenu("Pickup (Debug, Forced)")]
+    private void DEBUG_ForcePickup()
+    {
+        if (objectSelected == false) return;
+
         toPickupObject.Pickup(this);
 
         heldObject = toPickupObject;
-        isHoldingObject = true;
+        objectHeld = true;
     }
+
+
+    [ContextMenu("Pickup")]
+    private void DEBUG_Pickup()
+    {
+        if (objectSelected == false) return;
+
+        //if the object that is trying to be picked up by this hand, is held by the other hand and canSwapItemFromHands is false, return
+        if (toPickupObject.interactable == false || (toPickupObject.heldByPlayer && settings.canSwapItemFromHands == false))
+        {
+            return;
+        }
+
+        toPickupObject.Pickup(this);
+
+        heldObject = toPickupObject;
+        objectHeld = true;
+
+        hand.SendVibration(settings.pickupVibrationParams);
+    }
+
+#endif
 }

@@ -9,7 +9,6 @@ using UnityEngine.Events;
 [BurstCompile]
 public class Interactable : MonoBehaviour
 {
-    //[HideInInspector]
     public InteractionController connectedHand;
 
     public bool interactable = true;
@@ -53,7 +52,7 @@ public class Interactable : MonoBehaviour
     {
         if (connectedHand != null)
         {
-            connectedHand.isHoldingObject = false;
+            connectedHand.objectHeld = false;
         }
 
         connectedHand = handInteractor;
@@ -93,7 +92,7 @@ public class Interactable : MonoBehaviour
 
         if (connectedHand != null)
         {
-            connectedHand.isHoldingObject = false;
+            connectedHand.objectHeld = false;
         }
     }
 

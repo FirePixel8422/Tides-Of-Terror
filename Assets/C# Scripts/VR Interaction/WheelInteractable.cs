@@ -29,7 +29,7 @@ public class WheelInteractable : Interactable
     [SerializeField] private float maxRotSpeed = 200;
     [SerializeField] private float rotDecayPercent = 0.2f;
 
-    [Header("1 divided by how much time for wheel to fully spin back to center")]
+    [Header("how stronly the wheel spins back to the center")]
     [SerializeField] private float centeringStrength = 0.1f;
 
     [Header("How often and how hard should tiny waves affect the wheel")]
@@ -402,11 +402,6 @@ public class WheelInteractable : Interactable
 
 #if UNITY_EDITOR
 
-    [Space(12)]
-
-    [SerializeField] private InteractionController DEBUG_handL;
-    [SerializeField] private InteractionController DEBUG_handR;
-
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
@@ -421,12 +416,12 @@ public class WheelInteractable : Interactable
         Gizmos.color = Color.green;
         Vector3 pos;
 
-        if (DEBUG_handL != null && DrawHandPinPointGizmo(DEBUG_handL.transform.position, out pos))
+        if (leftHand != null && DrawHandPinPointGizmo(leftHand.transform.position, out pos))
         {
             Gizmos.DrawWireSphere(pos, pinPointMaxRange * 0.5f);
         }
 
-        if (DEBUG_handR != null && DrawHandPinPointGizmo(DEBUG_handR.transform.position, out pos))
+        if (rightHand != null && DrawHandPinPointGizmo(rightHand.transform.position, out pos))
         {
             Gizmos.DrawWireSphere(pos, pinPointMaxRange * 0.5f);
         }
@@ -457,13 +452,6 @@ public class WheelInteractable : Interactable
 
         gizmoSpherePos = Vector3.zero;
         return false;
-    }
-
-    [ContextMenu("Grab")]
-    private void GrabWheel()
-    {
-        DEBUG_handL.DEBUG_ForcePickup(this);
-        DEBUG_handR.DEBUG_ForcePickup(this);
     }
 
 #endif

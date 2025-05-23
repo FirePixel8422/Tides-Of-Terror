@@ -8,12 +8,13 @@ public class XRMovementController : MonoBehaviour
 {
     [SerializeField] private Transform headTransform;
     [SerializeField] private Transform turnTransform;
+
     [SerializeField] private float moveSpeed = 3;
     [SerializeField] private float turnSpeed = 90;
 
-
     [SerializeField] private Vector2 moveInput;
     [SerializeField] private Vector2 turnInput;
+
     private Rigidbody rb;
 
 
