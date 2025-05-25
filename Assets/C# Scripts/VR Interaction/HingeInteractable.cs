@@ -1,10 +1,11 @@
-using System;
 using Unity.Mathematics;
 using UnityEngine;
 
 
 public class HingeInteractable : Interactable
 {
+    [SerializeField] private InteractionController connectedHandController;
+
     [Header("Highest parent of this interactable")]
     [SerializeField] private Transform objectRoot;
 
@@ -27,34 +28,34 @@ public class HingeInteractable : Interactable
 
 
 
-    protected override void Start()
-    {
-        UpdateScheduler.Register(OnUpdate);
-    }
+    private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
+    private void OnDisable() => UpdateScheduler.UnregisterUpdate(OnUpdate);
 
 
     public override void Pickup(InteractionController handInteractor)
     {
         if (heldByPlayer)
         {
-            connectedHand.hand.vrHandAnimator.ResetHandTransform();
+            connectedHandController.hand.vrHandAnimator.ResetHandTransform();
         }
+
+        connectedHandController = handInteractor;
 
         base.Pickup(handInteractor);
     }
 
     public override void Drop(HandType handType)
     {
-        connectedHand.hand.vrHandAnimator.ResetHandTransform();
+        connectedHandController.hand.vrHandAnimator.ResetHandTransform();
+        connectedHandController = null;
 
         base.Drop(handType);
     }
 
     public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
-        connectedHand.hand.vrHandAnimator.ResetHandTransform();
-
-        base.Throw(handType, velocity, angularVelocity);
+        //hinges CANT be thrown
+        Drop(handType);
     }
 
 
@@ -62,16 +63,15 @@ public class HingeInteractable : Interactable
 
     private void OnUpdate()
     {
-        if(heldByPlayer == false) return;
+        if (heldByPlayer == false) return;
 
         Vector3 transformPos = transform.position;
-        Vector3 handTransformPos = connectedHand.transform.position;
+        Vector3 handTransformPos = connectedHandController.transform.position;
 
         if (snapPlayerHandToTransform)
         {
             SnapHandToTransform(handTransformPos);
         }
-
 
         RotateTransform(transformPos, handTransformPos);
     }
@@ -83,22 +83,22 @@ public class HingeInteractable : Interactable
 
         if (handDistanceToTransform > interactionRange)
         {
-            connectedHand.hand.vrHandAnimator.ResetHandTransform();
+            connectedHandController.hand.vrHandAnimator.ResetHandTransform();
 
-            connectedHand.objectHeld = false;
-            connectedHand = null;
+            connectedHandController.objectHeld = false;
+            connectedHandController = null;
             heldByPlayer = false;
         }
         else
         {
             bool flip = false;
 
-            if (forHand != HandType.None && forHand == HandType.Left != connectedHand.hand.isLeftHand)
+            if (forHand != HandType.None && forHand == HandType.Left != connectedHandController.hand.IsLeftHand)
             {
                 flip = true;
             }
 
-            connectedHand.hand.vrHandAnimator.UpdateHandTransform(snapTransform.position, snapTransform.rotation, flip);
+            connectedHandController.hand.vrHandAnimator.UpdateHandTransform(snapTransform.position, snapTransform.rotation, flip);
         }
     }
 
@@ -120,7 +120,6 @@ public class HingeInteractable : Interactable
             dir.z = 0;
         }
 
-
         Debug.DrawLine(transformPos, transformPos + dir);
 
         // Calculate quaternion for the local direction
@@ -141,10 +140,10 @@ public class HingeInteractable : Interactable
     }
 
 
-
-
     protected override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
+
         Gizmos.DrawCube(transform.position, Vector3.one * 0.1f);
     }
 }

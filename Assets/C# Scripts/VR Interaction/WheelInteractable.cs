@@ -62,8 +62,6 @@ public class WheelInteractable : Interactable
 
     protected override void Start()
     {
-        UpdateScheduler.Register(OnUpdate);
-
         rotDirection = Vector3.zero;
 
         if (turnOnAxis.HasFlag(SingleTurnConstraints.X))
@@ -85,14 +83,13 @@ public class WheelInteractable : Interactable
     }
 
 
-    private void OnEnable() => UpdateScheduler.Register(OnUpdate);
-    private void OnDisable() => UpdateScheduler.Unregister(OnUpdate);
+    private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
+    private void OnDisable() => UpdateScheduler.UnregisterUpdate(OnUpdate);
 
 
     public override void Pickup(InteractionController handInteractor)
     {
-        //call pickup for non interacting hand
-        if (handInteractor.hand.isLeftHand)
+        if (handInteractor.hand.IsLeftHand)
         {
             if (SnapHandToClosestWheelPinPoint(handInteractor.hand))
             {
@@ -118,6 +115,7 @@ public class WheelInteractable : Interactable
         }
 
         heldByPlayer = true;
+        OnInteract?.Invoke();
     }
 
     public override void Drop(HandType handType)
@@ -152,6 +150,7 @@ public class WheelInteractable : Interactable
         {
             leftHand.vrHandAnimator.ResetHandTransform();
             leftHand = null;
+            leftHandPinPointIndex = -1;
 
             if (rightHand == null)
             {
@@ -162,6 +161,7 @@ public class WheelInteractable : Interactable
         {
             rightHand.vrHandAnimator.ResetHandTransform();
             rightHand = null;
+            rightHandPinPointIndex = -1;
 
             if (leftHand == null)
             {
@@ -294,7 +294,7 @@ public class WheelInteractable : Interactable
 
 
         //otherwise save closest pinPoint index
-        if (hand.isLeftHand)
+        if (hand.IsLeftHand)
         {
             leftHandPinPointIndex = targetIndex;
             leftHandPrevLocalPos = handPos;
@@ -316,9 +316,9 @@ public class WheelInteractable : Interactable
 
     private bool UpdateHandTransform(Hand hand, Vector3 wheelpos)
     {
-        bool isLeftHand = hand.isLeftHand;
+        bool IsLeftHand = hand.IsLeftHand;
 
-        Vector3 targetPos = CalculateWheelPinPoint(isLeftHand ? leftHandPinPointIndex : rightHandPinPointIndex) + handPosOffset;
+        Vector3 targetPos = CalculateWheelPinPoint(IsLeftHand ? leftHandPinPointIndex : rightHandPinPointIndex) + handPosOffset;
 
         if (Vector3.Distance(hand.interactionController.transform.position, targetPos) > pinPointMaxRange)
         {
@@ -331,7 +331,7 @@ public class WheelInteractable : Interactable
             Vector3 toWheelCenter = (wheelpos - targetPos).normalized;
             Quaternion handRotation = Quaternion.LookRotation(toWheelCenter, transform.up) * handRotOffset;
 
-            if (isLeftHand == false)
+            if (IsLeftHand == false)
             {
                 handRotation *= Quaternion.Euler(180, 180, 0);
             }

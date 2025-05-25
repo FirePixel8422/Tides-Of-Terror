@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 public class Hand : MonoBehaviour
 {
-    #region Hands static Instances Setup
+    public HandType handType;
 
     public static Hand Left;
     public static Hand Right;
@@ -23,12 +23,9 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public HandType handType;
 
-    #endregion
-
-    public bool isLeftHand => handType == HandType.Left;
-    public bool isRightHand => handType == HandType.Right;
+    public bool IsLeftHand => handType == HandType.Left;
+    public bool IsRightHand => handType == HandType.Right;
 
 
     [HideInInspector] public InteractionController interactionController;
@@ -50,7 +47,7 @@ public class Hand : MonoBehaviour
     [BurstCompile]
     public void SendVibration(float amplitude, float duration)
     {
-        hapticImpulsePlayer.SendHapticImpulse(amplitude, duration);
+        hapticImpulsePlayer?.SendHapticImpulse(amplitude, duration);
     }
     
     [BurstCompile]
@@ -78,30 +75,4 @@ public class Hand : MonoBehaviour
             yield return waitPulseInterval;
         }
     }
-}
-
-
-[System.Serializable]
-public struct VibrationParamaters
-{
-    public VibrationParamaters(float _amplitude, float _duration, int _pulseCount = 1, float _pulseInterval = 0)
-    {
-        amplitude = _amplitude;
-        duration = _duration;
-
-        pulseCount = _pulseCount;
-        pulseInterval = _pulseInterval;
-    }
-
-    [Header("Vibration Strength"), Range(0f, 1f)]
-    public float amplitude;
-
-    [Header("Duration off a vibration")]
-    public float duration;
-
-    [Header("Amount of times the controller vibrates"), Range(1, 16)]
-    public int pulseCount;
-
-    [Header("Delay between vibrations (after it finished)")]
-    public float pulseInterval;
 }

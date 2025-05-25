@@ -1,7 +1,7 @@
 ﻿
 
 
-public enum HandType
+public enum HandType : byte
 {
     None,
     Left,

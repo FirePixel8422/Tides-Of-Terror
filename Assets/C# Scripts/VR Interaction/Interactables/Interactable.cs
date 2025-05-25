@@ -1,4 +1,3 @@
-using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,11 +5,8 @@ using UnityEngine.Events;
 
 
 
-[BurstCompile]
 public class Interactable : MonoBehaviour
 {
-    public InteractionController connectedHand;
-
     public bool interactable = true;
     public bool isThrowable = true;
     public bool heldByPlayer;
@@ -20,82 +16,39 @@ public class Interactable : MonoBehaviour
     [SerializeField] protected UnityEvent OnInteract;
 
 
-    protected virtual void Start()
-    {
+    protected virtual void Start() { }
 
-    }
-
-
-    #region Select And Deselect
-
-    [BurstCompile]
-    public virtual void OnSelect()
-    {
-
-    }
-
-    [BurstCompile]
-    public virtual void OnDeSelect()
-    {
-
-    }
-
-    #endregion
+    public virtual void OnSelect() { }
+    public virtual void OnDeSelect() { }
 
 
 
-
-    #region Pickup, Throw And Drop
-
-    [BurstCompile]
     public virtual void Pickup(InteractionController handInteractor)
     {
-        if (connectedHand != null)
-        {
-            connectedHand.objectHeld = false;
-        }
-
-        connectedHand = handInteractor;
         heldByPlayer = true;
 
         OnInteract?.Invoke();
     }
 
-
-
-
-    [BurstCompile]
-    public virtual void Throw(HandType handType, float3 velocity, float3 angularVelocity)
-    {
-        connectedHand = null;
-        heldByPlayer = false;
-    }
-
-
-
-
-    [BurstCompile]
     public virtual void Drop(HandType handType)
     {
-        connectedHand = null;
         heldByPlayer = false;
     }
 
-    #endregion
-
-
-
-
-    private void OnDestroy()
+    public virtual void Throw(HandType handType, float3 velocity, float3 angularVelocity)
     {
-        interactable = false;
-
-        if (connectedHand != null)
-        {
-            connectedHand.objectHeld = false;
-        }
+        heldByPlayer = false;
     }
 
+
+    protected virtual void OnDestroy()
+    {
+        interactable = false;
+    }
+
+
+
+#if UNITY_EDITOR
 
     private void OnValidate()
     {
@@ -110,4 +63,6 @@ public class Interactable : MonoBehaviour
     {
         Gizmos.DrawWireSphere(transform.position, objectSize);
     }
+
+#endif
 }

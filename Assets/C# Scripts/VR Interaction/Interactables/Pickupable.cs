@@ -1,16 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 
 
 
 [RequireComponent(typeof(Rigidbody))]
-[BurstCompile]
 public class Pickupable : Interactable
 {
+    [SerializeField] private InteractionController connectedHandController;
+
     [Header("Pickup Settings")]
     [SerializeField] protected Vector3 pickupPosOffset;
 
@@ -35,7 +34,6 @@ public class Pickupable : Interactable
 
 
 
-    [BurstCompile]
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -54,12 +52,18 @@ public class Pickupable : Interactable
     }
 
 
-    [BurstCompile]
     public override void Pickup(InteractionController handInteractor)
     {
-        bool isRightHand = handInteractor.hand.isRightHand;
-
         base.Pickup(handInteractor);
+
+        //let the current connected hand drop this item if other tries to pick it up
+        if (connectedHandController != null)
+        {
+            connectedHandController.ForceDrop();
+        }
+
+        connectedHandController = handInteractor;
+
 
         transform.SetParent(handInteractor.HeldItemHolder, false, false);
 
@@ -75,7 +79,7 @@ public class Pickupable : Interactable
             transform.localRotation *= Quaternion.Euler(pickUpRotOffset);
         }
 
-        if (isRightHand)
+        if (handInteractor.hand.IsRightHand)
         {
             transform.localPosition = new Vector3(-transform.localPosition.x, transform.localPosition.y, -transform.localPosition.z);
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y - 180, transform.localEulerAngles.z);
@@ -85,16 +89,20 @@ public class Pickupable : Interactable
     }
 
 
-    [BurstCompile]
-    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
+    public override void Drop(HandType handType)
     {
-        base.Throw(handType, velocity, angularVelocity);
+        base.Drop(handType);
 
-        TogglePhysics(true);
-
+        connectedHandController = null;
         transform.parent = null;
 
+        TogglePhysics(true);
         rb.isKinematic = false;
+    }
+
+    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
+    {
+        Drop(handType);
 
         float3 targetVelocity = velocity * throwVelocityMultiplier;
 
@@ -117,19 +125,6 @@ public class Pickupable : Interactable
     }
 
 
-    [BurstCompile]
-    public override void Drop(HandType handType)
-    {
-        base.Drop(handType);
-
-        TogglePhysics(true);
-
-        transform.parent = null;
-
-        rb.isKinematic = false;
-    }
-
-
     public void TogglePhysics(bool state, bool keepColliders = false)
     {
         if (keepColliders == false)
@@ -141,6 +136,17 @@ public class Pickupable : Interactable
         }
 
         rb.constraints = state ? RigidbodyConstraints.None : RigidbodyConstraints.FreezeAll;
+    }
+
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        if (heldByPlayer)
+        {
+            connectedHandController.ForceDrop();
+        }
     }
 
 

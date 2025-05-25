@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,13 +7,12 @@ public class VRHandAnimator : MonoBehaviour
 {
     private Animator anim;
 
+    [SerializeField] private float valueUpdateSpeed;
     [SerializeField] private float controllerButtonPressPercent;
-    [SerializeField] private float _cButtonPressPercent;
-    public float valueUpdateSpeed;
+    [SerializeField] private float cButtonPressPercent;
 
     private Vector3 localPos;
-    [HideInInspector]
-    public Quaternion localRot;
+    private Quaternion localRot;
 
 
     private void Start()
@@ -24,8 +21,6 @@ public class VRHandAnimator : MonoBehaviour
 
         localPos = transform.localPosition;
         localRot = transform.localRotation;
-
-        UpdateScheduler.Register(OnUpdate);
     }
 
     public void OnBigTriggerStateChange(InputAction.CallbackContext ctx)
@@ -34,11 +29,14 @@ public class VRHandAnimator : MonoBehaviour
     }
 
 
+    private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
+    private void OnDisable() => UpdateScheduler.UnregisterUpdate(OnUpdate);
+
 
     private void OnUpdate()
     {
-        _cButtonPressPercent = Mathf.MoveTowards(_cButtonPressPercent, controllerButtonPressPercent, valueUpdateSpeed * Time.deltaTime);
-        anim.SetFloat("GrabStrength", _cButtonPressPercent);
+        cButtonPressPercent = Mathf.MoveTowards(cButtonPressPercent, controllerButtonPressPercent, valueUpdateSpeed * Time.deltaTime);
+        anim.SetFloat("GrabStrength", cButtonPressPercent);
     }
 
 
@@ -54,19 +52,14 @@ public class VRHandAnimator : MonoBehaviour
 
         transform.SetPositionAndRotation(pos, targetRot);
     }
+
     public void UpdateHandTransform(Vector3 pos)
     {
         transform.position = pos;
     }
 
-
     public void ResetHandTransform()
     {
         transform.SetLocalPositionAndRotation(localPos, localRot);
-    }
-
-    private void OnDestroy()
-    {
-        UpdateScheduler.Unregister(OnUpdate);
     }
 }

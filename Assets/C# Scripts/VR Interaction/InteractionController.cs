@@ -85,8 +85,8 @@ public class InteractionController : MonoBehaviour
     }
 
 
-    private void OnEnable() => UpdateScheduler.Register(OnUpdate);
-    private void OnDisable() => UpdateScheduler.Unregister(OnUpdate);
+    private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
+    private void OnDisable() => UpdateScheduler.UnregisterUpdate(OnUpdate);
 
 
 
