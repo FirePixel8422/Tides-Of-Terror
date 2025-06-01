@@ -35,7 +35,7 @@ public class Interactable : MonoBehaviour
         heldByPlayer = false;
     }
 
-    public virtual void Throw(HandType handType, float3 velocity, float3 angularVelocity)
+    public virtual void Throw(HandType handType, float3 throwVelocity, float3 moveVelocity, float3 angularVelocity)
     {
         heldByPlayer = false;
     }

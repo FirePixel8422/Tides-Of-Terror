@@ -18,6 +18,12 @@ public static class MathLogic
         return math.abs(difference.x) + math.abs(difference.y) + math.abs(difference.z);
     }
 
+    /// <returns>Absolute of: X + Y + Z</returns>
+    public static float AbsoluteSum(this float3 value)
+    {
+        return math.abs(value.x) + math.abs(value.y) + math.abs(value.z);
+    }
+
 
     [BurstCompile(DisableSafetyChecks = true)]
     public static float MoveTowards(float current, float target, float maxDelta)

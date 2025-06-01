@@ -80,7 +80,8 @@ public class InteractionController : MonoBehaviour
 
         maxFrames = (int)math.round(1 / Time.fixedDeltaTime * velocityRememberTime);
 
-        savedLocalVelocity = new float3[maxFrames];
+        savedLocalHandVelocity = new float3[maxFrames];
+        savedLocalBodyVelocity = new float3[maxFrames];
         savedAngularVelocity = new float3[maxFrames];
     }
 
@@ -298,10 +299,12 @@ public class InteractionController : MonoBehaviour
         //drop item if it is throwable
         if (heldObject.isThrowable)
         {
-            float3 velocity = float3.zero;
+            float3 throwVelocity = float3.zero;
+            float3 moveVelocity = float3.zero;
             for (int i = 0; i < maxFrames; i++)
             {
-                velocity += savedLocalVelocity[i] / maxFrames;
+                throwVelocity += savedLocalHandVelocity[i] * settings.throwVelocityMultiplier / maxFrames;
+                moveVelocity += savedLocalBodyVelocity[i] / maxFrames;
             }
 
             float3 angularVelocity = float3.zero;
@@ -310,7 +313,7 @@ public class InteractionController : MonoBehaviour
                 angularVelocity += savedAngularVelocity[i] / maxFrames;
             }
 
-            heldObject.Throw(hand.handType, velocity, angularVelocity);
+            heldObject.Throw(hand.handType, throwVelocity, moveVelocity, angularVelocity);
         }
         else
         {
@@ -343,7 +346,8 @@ public class InteractionController : MonoBehaviour
     private float3 prevbodyTransformPos;
 
     private float3 prevTransformPos;
-    [SerializeField] private float3[] savedLocalVelocity;
+    [SerializeField] private float3[] savedLocalHandVelocity;
+    [SerializeField] private float3[] savedLocalBodyVelocity;
 
     private quaternion prevRotation;
     [SerializeField] private float3[] savedAngularVelocity;
@@ -366,17 +370,19 @@ public class InteractionController : MonoBehaviour
     {
         //store and remove boatTransform (parent) rotation influence
         Quaternion boatRot = boatTransform.rotation;
-        boatTransform.transform.rotation = Quaternion.identity;
+
+        //boatTransform.transform.rotation = Quaternion.identity;
+
 
         //Calculate velocity based on hand movement
-        savedLocalVelocity[frameIndex] = bodyMovementTransform.rotation * ((float3)transform.localPosition - prevTransformPos) * settings.throwVelocityMultiplier * Time.fixedDeltaTime;
+        savedLocalHandVelocity[frameIndex] = bodyMovementTransform.rotation * ((float3)transform.localPosition - prevTransformPos) * Time.fixedDeltaTime;
 
         prevTransformPos = transform.localPosition;
 
         //Add velocity based on player body
         if (settings.shouldThrowVelAddMovementVel)
         {
-            savedLocalVelocity[frameIndex] += ((float3)bodyMovementTransform.localPosition - prevbodyTransformPos) * Time.fixedDeltaTime;
+            savedLocalBodyVelocity[frameIndex] += ((float3)bodyMovementTransform.localPosition - prevbodyTransformPos) * Time.fixedDeltaTime;
 
             prevbodyTransformPos = bodyMovementTransform.localPosition;
         }
@@ -393,7 +399,7 @@ public class InteractionController : MonoBehaviour
         frameIndex = (frameIndex + 1) % maxFrames;
 
         //restore boat rotation
-        boatTransform.rotation = boatRot;
+        boatTransform.transform.rotation = boatRot;
     }
 
     #endregion

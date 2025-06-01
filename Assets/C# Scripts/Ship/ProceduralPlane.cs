@@ -42,7 +42,7 @@ public class ProceduralSpherePlane : MonoBehaviour
                 float py = distSq <= radius * radius
                     ? Mathf.Sqrt(radius * radius - distSq)
                     : 0.0f;
-
+                
                 vertices[i] = new Vector3(px, py, pz);
                 uvs[i] = new Vector2((float)x / (vertexCount - 1), (float)z / (vertexCount - 1));
             }

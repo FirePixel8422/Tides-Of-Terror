@@ -20,13 +20,13 @@ public class Pickupable : Interactable
     [SerializeField] private float throwVelocityMultiplier = 1;
 
     [Header("Does this object recieve angular verlocity when thrown?")]
-    [SerializeField] private bool useAngularVelocity = true;
+    [SerializeField] private bool throwUseAngularVelocity = true;
 
     [Header("Max velocity on each axis (direction is kept)")]
-    [SerializeField] private float3 velocityClamp = new Vector3(10, 10, 10);
+    [SerializeField] private float3 throwVelocityClamp = new Vector3(10, 10, 10);
 
     [Header("Release object with 0 velocity of released with less then minRequiredVelocity")]
-    [SerializeField] private float minRequiredVelocityXYZ = 0.065f;
+    [SerializeField] private float throwMinRequiredVelocityXYZ = 0.065f;
 
 
     private Rigidbody rb;
@@ -34,7 +34,7 @@ public class Pickupable : Interactable
 
 
 
-    private void Awake()
+    protected override void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -100,29 +100,29 @@ public class Pickupable : Interactable
         rb.isKinematic = false;
     }
 
-    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
+    public override void Throw(HandType handType, float3 throwVelocity, float3 moveVelocity, float3 angularVelocity)
     {
         Drop(handType);
 
-        float3 targetVelocity = velocity * throwVelocityMultiplier;
+		float3 targetVelocity = throwVelocity * throwVelocityMultiplier + moveVelocity;
 
-        //only if velocity is MORE then minRequiredVelocityXYZ set rigidBody velocity to targetVelocity
-        if (math.abs(targetVelocity.x) + math.abs(targetVelocity.y) + math.abs(targetVelocity.z) > minRequiredVelocityXYZ)
-        {
-            if (useAngularVelocity)
-            {
-                rb.angularVelocity = angularVelocity;
-            }
+		//only if velocity is MORE then minRequiredVelocityXYZ set rigidBody velocity to targetVelocity
+		if (targetVelocity.AbsoluteSum() > throwMinRequiredVelocityXYZ)
+		{
+			if (throwUseAngularVelocity)
+			{
+				rb.angularVelocity = angularVelocity;
+			}
 
-            // Calculate the radius vector from the center of mass to the point
-            float3 radius = transform.position - rb.worldCenterOfMass;
+			// Calculate the radius vector from the center of mass to the point
+			float3 radius = transform.position - rb.worldCenterOfMass;
 
-            // Calculate the linear velocity caused by angular velocity
-            float3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
+			// Calculate the linear velocity caused by angular velocity
+			float3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
 
-            rb.velocity = VectorLogic.ClampDirection(targetVelocity + tangentialVelocity, velocityClamp);
-        }
-    }
+			rb.velocity = VectorLogic.ClampDirection(targetVelocity + tangentialVelocity, throwVelocityClamp);
+		}
+	}
 
 
     public void TogglePhysics(bool state, bool keepColliders = false)

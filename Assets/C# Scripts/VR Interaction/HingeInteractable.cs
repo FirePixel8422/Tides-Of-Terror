@@ -52,7 +52,7 @@ public class HingeInteractable : Interactable
         base.Drop(handType);
     }
 
-    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
+    public override void Throw(HandType handType, float3 throwVelocity, float3 moveVelocity, float3 angularVelocity)
     {
         //hinges CANT be thrown
         Drop(handType);

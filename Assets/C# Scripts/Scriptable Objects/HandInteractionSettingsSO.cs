@@ -26,7 +26,7 @@ public class HandInteractionSettingsSO : ScriptableObject
     public GrabState grabState = (GrabState)3;
     
     [Header("What pickup methods to use")]
-    public InteractionPriorityMode interactionPriorityMode = (InteractionPriorityMode)1;
+    public InteractionPriorityMode interactionPriorityMode = InteractionPriorityMode.Raycast;
 
     [Header("What layer should the interactables be on?")]
     public LayerMask interactablesLayer;

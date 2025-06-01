@@ -10,6 +10,7 @@ public class WheelInteractable : Interactable
 
     [Header("How much degrees per second does boat rotate at full steer (L/R)")]
     [SerializeField] private float boatSteerSpeed = 1;
+    [SerializeField] private float boatTiltPower = 1;
 
     [Header("Pinpoints where the hands clip onto when the wheel is held and rotation offset")]
     [SerializeField] private Vector3[] handPinPoints;
@@ -144,7 +145,7 @@ public class WheelInteractable : Interactable
         }
     }
 
-    public override void Throw(HandType handType, float3 velocity, float3 angularVelocity)
+    public override void Throw(HandType handType, float3 throwVelocity, float3 moveVelocity, float3 angularVelocity)
     {
         if (handType == HandType.Left)
         {
@@ -263,6 +264,7 @@ public class WheelInteractable : Interactable
         float boatRotY = steerAngle == 0 ? 0 : steerAngle / steerAngleClamp;
 
         boatTransform.Rotate(Vector3.up, boatRotY * boatSteerSpeed * deltaTime);
+        //boatTransform.Rotate(Vector3.right, boatRotY * boatTiltPower * deltaTime, );
     }
 
 
