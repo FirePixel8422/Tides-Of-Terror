@@ -1,22 +1,25 @@
-using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 
 
+
 public class PhysicsPickupable : Interactable
 {
-    private Transform headTransform;
     private InteractionController leftHandController;
     private InteractionController rightHandController;
 
     private Vector3 leftHandOffset;
     private Vector3 rightHandOffset;
 
+    private float leftHandRotYAngle;
+    private float rightHandRotYAngle;
+
     [SerializeField] private float movePower = 5;
+    [SerializeField] private float rotPower = 1;
     [SerializeField] private float velocityDecayPower = 0.1f;
 
     [SerializeField] private bool keepObjectUpRight = true;
-    [SerializeField] private float rotPower = 1;
+    [SerializeField] private float uprightRotPower = 1;
 
 
     [Header("How hard can you throw this object")]
@@ -45,17 +48,16 @@ public class PhysicsPickupable : Interactable
         if (handInteractor.hand.IsLeftHand)
         {
             leftHandController = handInteractor;
+
             leftHandOffset = handInteractor.transform.position - transform.position;
+            leftHandRotYAngle = handInteractor.transform.rotation.y;
         }
         else
         {
             rightHandController = handInteractor;
-            rightHandOffset = handInteractor.transform.position - transform.position;
-        }
 
-        if (heldByPlayer == false)
-        {
-            headTransform = handInteractor.hand.transform.parent;
+            rightHandOffset = handInteractor.transform.position - transform.position;
+            rightHandRotYAngle = handInteractor.transform.rotation.y;
         }
 
         heldByPlayer = true;
@@ -108,25 +110,33 @@ public class PhysicsPickupable : Interactable
 
     private void OnFixedUpdate()
     {
-        Vector3 closestTargetPos = Vector3.zero;
+        Vector3 closestTargetPos = new Vector3(0, 0, 0);
+        float closestAngle = -1;
 
         if (leftHandController != null)
         {
             closestTargetPos = leftHandController.transform.position - leftHandOffset;
+            closestAngle = Quaternion.Angle(leftHandController.transform.rotation, transform.rotation * Quaternion.Euler(0, leftHandRotYAngle, 0));
         }
         if (rightHandController != null)
         {
             Vector3 newTargetPos = rightHandController.transform.position - rightHandOffset;
+            float newAngle = Quaternion.Angle(rightHandController.transform.rotation, transform.rotation * Quaternion.Euler(0, rightHandRotYAngle, 0));
 
-            if (closestTargetPos.sqrMagnitude > newTargetPos.sqrMagnitude)
+            if (leftHandController == null || closestTargetPos.sqrMagnitude > newTargetPos.sqrMagnitude)
             {
                 closestTargetPos = newTargetPos;
             }
+            if (closestAngle > newAngle)
+            {
+                closestAngle = newAngle;
+            }
         }
 
-        Vector3 moveDir = (closestTargetPos - rb.position);
+        Vector3 moveDir = closestTargetPos - rb.position;
 
         rb.velocity = new Vector3(moveDir.x * movePower, rb.velocity.y + moveDir.y, moveDir.z * movePower);
+
 
 
         if (keepObjectUpRight)
@@ -147,7 +157,7 @@ public class PhysicsPickupable : Interactable
             if (angleInDegrees > 180f) angleInDegrees -= 360f;
 
             // Calculate torque based on angle difference and power
-            Vector3 torque = rotationAxis * angleInDegrees * rotPower;
+            Vector3 torque = angleInDegrees * uprightRotPower * rotationAxis;
 
             // Apply torque (in world space)
             rb.AddTorque(torque * Time.fixedDeltaTime, ForceMode.VelocityChange);

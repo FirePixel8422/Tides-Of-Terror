@@ -28,6 +28,9 @@ public class Cannon : Interactable
 
     private bool onCooldown;
 
+    private static int IsPrimedBoolId = Shader.PropertyToID("_IsPrimed");
+    private static int TransparencyFloatId = Shader.PropertyToID("_Transparency");
+
 
     protected override void Start()
     {
@@ -51,29 +54,29 @@ public class Cannon : Interactable
     private IEnumerator ShootCannonBall()
     {
         //prime fuse
-        fuseShader.SetInteger("_IsPrimed", 1);
+        fuseShader.SetInt(IsPrimedBoolId, 1);
         //play sound for fuse
         fuseSource.Play();
 
         float elapsed = 0;
-        while (elapsed <= 1)
+        while (elapsed <= fuseIgniteTime)
         {
             yield return null;
 
             elapsed += Time.deltaTime;
             //reset fuse
-            fuseShader.SetFloat("_Transparancy", 1 - elapsed);
+            fuseShader.SetFloat(TransparencyFloatId, 1 - elapsed / fuseIgniteTime);
         }
 
         //disable fuse fire
-        fuseShader.SetInteger("_IsPrimed", 0);
+        fuseShader.SetInt(IsPrimedBoolId, 0);
         //play barrel shoot sound
         barrelSource.Play();
 
         yield return new WaitForSeconds(cannonShootDelay);
 
         //reset fuse
-        fuseShader.SetFloat("_Transparancy", 1);
+        fuseShader.SetFloat(TransparencyFloatId, 1);
 
         //set velocity
         cartRigidBody.velocity = -transform.forward * backThrustPower + transform.up * backThrustUpwardsPower;
@@ -102,8 +105,8 @@ public class Cannon : Interactable
     private void OnDrawGizmos()
     {
         base.OnDrawGizmosSelected();
-        
-        if(cannonBallSpawnPoint != null)
+
+        if (cannonBallSpawnPoint != null) 
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(cannonBallSpawnPoint.position, 0.25f);

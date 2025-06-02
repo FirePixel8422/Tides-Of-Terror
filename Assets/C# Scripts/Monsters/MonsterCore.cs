@@ -8,6 +8,11 @@ public class MonsterCore : MonoBehaviour
     private MonsterStateMachine stateMachine;
 
 
+    private void Start()
+    {
+        stateMachine = GetComponent<MonsterStateMachine>();
+    }
+
     public void Hit(float damage)
     {
         health -= damage;
@@ -20,5 +25,7 @@ public class MonsterCore : MonoBehaviour
         {
             stateMachine.GetHurt();
         }
+
+        Destroy(gameObject, 0.5f);
     }
 }

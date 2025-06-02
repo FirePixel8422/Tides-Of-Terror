@@ -412,21 +412,26 @@ public class InteractionController : MonoBehaviour
 
     [SerializeField] private bool DEBUG_ControlMode;
     [SerializeField] private float DEBUG_MoveSpeed = 1f;
+    [SerializeField] private float DEBUG_RotSpeed = 1f;
     private void Update()
     {
         if (DEBUG_ControlMode == false) return;
 
-        float moveSpeed = DEBUG_MoveSpeed * Time.deltaTime;
         Vector3 move = Vector3.zero;
+        float rot = 0;
 
         if (Input.GetKey(KeyCode.W)) move += transform.forward;
         if (Input.GetKey(KeyCode.S)) move -= transform.forward;
         if (Input.GetKey(KeyCode.A)) move -= transform.right;
         if (Input.GetKey(KeyCode.D)) move += transform.right;
-        if (Input.GetKey(KeyCode.Q)) move -= transform.up;
-        if (Input.GetKey(KeyCode.E)) move += transform.up;
+        if (Input.GetKey(KeyCode.LeftShift)) move -= transform.up;
+        if (Input.GetKey(KeyCode.Space)) move += transform.up;
 
-        transform.position += move * moveSpeed;
+        if (Input.GetKey(KeyCode.Q)) rot -= 1;
+        if (Input.GetKey(KeyCode.E)) rot += 1;
+
+        transform.position += move * DEBUG_MoveSpeed * Time.deltaTime;
+        transform.Rotate(Vector3.up, rot * DEBUG_RotSpeed * Time.deltaTime);
 
         if (Input.GetMouseButtonDown(0)) DEBUG_Pickup();
         if (Input.GetMouseButtonUp(0) && objectHeld) Drop();
