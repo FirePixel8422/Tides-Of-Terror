@@ -24,8 +24,19 @@ public class Cannon : Interactable
 
     [SerializeField] private float cooldownTime = 5;
 
-    private bool onCooldown = false;
+    private Material fuseShader;
 
+    private bool onCooldown;
+
+
+    protected override void Start()
+    {
+        base.Start();
+
+        fuseShader = GetComponent<Renderer>().material;
+
+        onCooldown = false;
+    }
 
 
     public override void Pickup(InteractionController handInteractor)
@@ -39,16 +50,36 @@ public class Cannon : Interactable
 
     private IEnumerator ShootCannonBall()
     {
+        //prime fuse
+        fuseShader.SetInteger("_IsPrimed", 1);
+        //play sound for fuse
         fuseSource.Play();
 
-        yield return new WaitForSeconds(fuseIgniteTime);
+        float elapsed = 0;
+        while (elapsed <= 1)
+        {
+            yield return null;
 
+            elapsed += Time.deltaTime;
+            //reset fuse
+            fuseShader.SetFloat("_Transparancy", 1 - elapsed);
+        }
+
+        //disable fuse fire
+        fuseShader.SetInteger("_IsPrimed", 0);
+        //play barrel shoot sound
         barrelSource.Play();
 
         yield return new WaitForSeconds(cannonShootDelay);
 
+        //reset fuse
+        fuseShader.SetFloat("_Transparancy", 1);
+
+        //set velocity
         cartRigidBody.velocity = -transform.forward * backThrustPower + transform.up * backThrustUpwardsPower;
         cartRigidBody.angularVelocity = transform.up * backThrustAngularPower;
+
+        //call shoot animation
         cannonAnim.SetTrigger("Shoot");
 
         Rigidbody cannonBall = Instantiate(cannonBallPrefab, cannonBallSpawnPoint.position, cannonBallSpawnPoint.rotation);
