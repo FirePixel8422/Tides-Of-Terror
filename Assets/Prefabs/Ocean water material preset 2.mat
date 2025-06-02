@@ -103,7 +103,7 @@ Material:
     - _Normal_2: {r: -1, g: 0, b: 0, a: 0}
     - _Surface_water_color: {r: 0, g: 0.9041667, b: 1, a: 0}
     - _Vector2: {r: 0, g: 0.3, b: 0, a: 0}
-    - _Water_color_1: {r: 0, g: 0.31609905, b: 0.5660378, a: 0}
-    - _Water_color_2: {r: 0, g: 0.5664871, b: 0.754717, a: 0}
+    - _Water_color_1: {r: 0.22745098, g: 0.22965036, b: 0.3372549, a: 0}
+    - _Water_color_2: {r: 0.14542541, g: 0.3083576, b: 0.3584906, a: 0}
     - _surface_water_color: {r: 0.5660378, g: 0.18422927, b: 0.18422927, a: 0}
   m_BuildTextureStacks: []

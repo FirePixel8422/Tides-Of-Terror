@@ -18,7 +18,7 @@ public class MonsterStateMachine : MonoBehaviour
     [SerializeField] private string idleAnimation = "Idle";
     [SerializeField] private string moveAnimation = "Move";
 
-    [SerializeField] private string[] attackAnimations = new string[] { "Attack1", "Attack2, Attack3" };
+    [SerializeField] private string[] attackAnimations = new string[] { "Attack1", "Attack2", "Attack3" };
 
     [SerializeField] private string hurtAnimation = "Hurt";
     [SerializeField] private string deathAnimation = "Death";
