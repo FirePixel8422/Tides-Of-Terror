@@ -1840,6 +1840,71 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -2.3738427
       objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: hurtAnimation
+      value: RIG-Octopus|Hurt
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: idleAnimation
+      value: RIG-Octopus|Idle
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: moveAnimation
+      value: RIG-Octopus|RAM_Charge
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: deathAnimation
+      value: RIG-Octopus|Death
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: currentAnimation
+      value: RIG-Octopus|Idle
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[0]
+      value: RIG-Octopus|RAM_Jump
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[1]
+      value: RIG-Octopus|RAM_Collision
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[2]
+      value: RIG-Octopus|SlapR1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[3]
+      value: RIG-Octopus|SlapR2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[4]
+      value: RIG-Octopus|SlapR3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[5]
+      value: RIG-Octopus|SlapL1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[6]
+      value: RIG-Octopus|SlapL2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691381305233510971, guid: 89bb16e2b74528d42b69121ccb752b51,
+        type: 3}
+      propertyPath: attackAnimations.Array.data[7]
+      value: RIG-Octopus|SlapL3
+      objectReference: {fileID: 0}
     - target: {fileID: 3703546481530075139, guid: 89bb16e2b74528d42b69121ccb752b51,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4589,15 +4654,45 @@ MonoBehaviour:
   frontRot: 0
   attackPosition: 0
   attackData:
-  - weight: 0
+  - weight: 1
     attackPosition: 255
     attackTime: 1
     attackId: 0
     followUpAttackDataId: -1
-  - weight: 0
+  - weight: 1
     attackPosition: 255
-    attackTime: 1
-    attackId: 0
+    attackTime: 3
+    attackId: 1
+    followUpAttackDataId: -1
+  - weight: 1
+    attackPosition: 2
+    attackTime: 3
+    attackId: 2
+    followUpAttackDataId: -1
+  - weight: 1
+    attackPosition: 2
+    attackTime: 3
+    attackId: 3
+    followUpAttackDataId: -1
+  - weight: 1
+    attackPosition: 2
+    attackTime: 3
+    attackId: 4
+    followUpAttackDataId: -1
+  - weight: 1
+    attackPosition: 1
+    attackTime: 3
+    attackId: 5
+    followUpAttackDataId: -1
+  - weight: 1
+    attackPosition: 1
+    attackTime: 3
+    attackId: 6
+    followUpAttackDataId: -1
+  - weight: 1
+    attackPosition: 1
+    attackTime: 3
+    attackId: 7
     followUpAttackDataId: -1
   cAttackId: 0
   attackInterval: 0

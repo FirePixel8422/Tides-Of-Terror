@@ -263,7 +263,7 @@ public class WheelInteractable : Interactable
 
         float boatRotY = steerAngle == 0 ? 0 : steerAngle / steerAngleClamp;
 
-        boatTransform.Rotate(Vector3.up, boatRotY * boatSteerSpeed * deltaTime);
+        boatTransform.Rotate(Vector3.up, -boatRotY * boatSteerSpeed * deltaTime);
         BoatEngine.Instance.swayAngle = boatRotY;
     }
 

@@ -63,6 +63,8 @@ public class MonsterCore : MonoBehaviour
 
         while (true)
         {
+            stateMachine.Attack(attackData[cAttackId].attackId);
+
             yield return new WaitForSeconds(attackData[cAttackId].attackTime);
 
             stateMachine.Idle();
@@ -90,6 +92,28 @@ public class MonsterCore : MonoBehaviour
         }
     }
 
+
+    [ContextMenu("Swap Side")]
+    protected virtual void SwapSide()
+    {
+        AttackPosition newAttackPosition = attackPosition;
+        float r = -1;
+
+        for (int i = 0; i < 3; i++)
+        {
+            int iPowerOf2 = MathLogic.ConvertToPowerOf2(i + 1);
+
+            float newR = EzRandom.Range(0f, 100f);
+
+            if (newR > r)
+            {
+                r = newR;
+                newAttackPosition = (AttackPosition)iPowerOf2;
+            }
+        }
+
+        attackPosition = newAttackPosition;
+    }
     private IEnumerator SwapSideAnimation()
     {
         while (transform.position.y > sinkY)
@@ -131,29 +155,6 @@ public class MonsterCore : MonoBehaviour
         transform.position = new Vector3(transform.position.x, riseY, transform.position.z);
     }
 
-    [ContextMenu("Swap Side")]
-    protected virtual void SwapSide()
-    {
-        AttackPosition newAttackPosition = attackPosition;
-        float r = -1;
-
-        for (int i = 0; i < 3; i++)
-        {
-            int iPowerOf2 = MathLogic.ConvertToPowerOf2(i + 1);
-
-            if ((int)attackPosition == iPowerOf2) continue;
-
-            float newR = EzRandom.Range(0f, 100f);
-
-            if (newR > r)
-            {
-                r = newR;
-                newAttackPosition = (AttackPosition)iPowerOf2;
-            }
-        }
-
-        attackPosition = newAttackPosition;
-    }
 
     /// <summary>
     /// Swap to new attack compatible with the current side of
@@ -165,7 +166,7 @@ public class MonsterCore : MonoBehaviour
 
         for (int i = 0; i < attackData.Length; i++)
         {
-            if (attackData[i].attackPosition.HasFlag(attackPosition)) continue;
+            if (attackData[i].attackPosition.HasFlag(attackPosition) == false) continue;
 
             compatibleAttackDataList.Add(attackData[i]);
             totalWeight += attackData[i].weight;
