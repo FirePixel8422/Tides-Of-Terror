@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 public class WaterToggler : MonoBehaviour
 {
+    [Header("On, Off")]
     [SerializeField] private Collider[] colls = new Collider[2];
 
     [SerializeField] private MeshRenderer waterRenderer;

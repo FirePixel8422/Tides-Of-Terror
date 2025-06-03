@@ -5,12 +5,20 @@ using UnityEngine;
 
 public class BoatEngine : MonoBehaviour
 {
+    public static BoatEngine Instance { get; private set; }
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+
+
     [SerializeField] private float enginePower = 1;
     [SerializeField] private float forwardSwaySpeed = 2;
     [SerializeField] private float forwardSwayInterval = 2;
     [SerializeField] private float turnSwaySpeed = 12;
 
-    public static float swayAngle;
+    public float swayAngle;
 
 
     private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);

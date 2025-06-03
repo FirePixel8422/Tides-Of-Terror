@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 
+[RequireComponent(typeof(Animator))]
 public class MonsterStateMachine : MonoBehaviour
 {
     private Animator anim;

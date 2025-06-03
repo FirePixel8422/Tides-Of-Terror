@@ -6,13 +6,24 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float damage;
 
+    [SerializeField] private ProjectileHitType hitType = ProjectileHitType.Fracture;
+    [SerializeField] private bool onlyBreakOnMonster;
+
     [SerializeField] private AudioClip[] impactAudioClips;
     [SerializeField] private float minVolume, maxVolume;
 
     private AudioSource audioSource;
     private Renderer meshRenderer;
+    private Collider coll;
 
 
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        meshRenderer = GetComponent<Renderer>();
+        coll = GetComponent<Collider>();
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -20,11 +31,39 @@ public class Projectile : MonoBehaviour
         {
             monster.Hit(damage);
         }
-
-        if (TryGetComponent(out FragmentController fragmentController))
+        else if (onlyBreakOnMonster == false)
         {
-            fragmentController.Shatter(transform.position + transform.forward);
+            return;
         }
+        coll.enabled = false;
+
+
+        switch (hitType)
+        {
+            case ProjectileHitType.None:
+
+                meshRenderer.enabled = false;
+
+                break;
+
+            case ProjectileHitType.Fracture:
+
+                if (TryGetComponent(out FragmentController fragmentController))
+                {
+                    fragmentController.Shatter(transform.position + transform.forward);
+                }
+
+                meshRenderer.enabled = false;
+
+                break;
+
+            case ProjectileHitType.Stick:
+
+                transform.SetParent(collision.transform, true);
+
+                break;
+        }
+
 
         if (impactAudioClips.Length != 0)
         {
@@ -37,11 +76,28 @@ public class Projectile : MonoBehaviour
 
             audioSource.Play();
 
-            Destroy(gameObject, audioSource.clip.length + 0.25f);
+            DestroyObj(audioSource.clip.length + 0.25f);
         }
         else
         {
-            Destroy(gameObject);
+            DestroyObj();
+        }
+    }
+
+    private void DestroyObj(float time = 0)
+    {
+        if (hitType != ProjectileHitType.Stick)
+        {
+            Destroy(gameObject, time);
+        }
+        else
+        {
+            foreach (Component comp in GetComponents<Component>())
+            {
+                if (comp is Transform || comp is MeshRenderer || comp is MeshFilter) continue;
+
+                Destroy(comp, time);
+            }
         }
     }
 }

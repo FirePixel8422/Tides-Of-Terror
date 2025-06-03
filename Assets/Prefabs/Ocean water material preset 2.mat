@@ -81,7 +81,7 @@ Material:
     - _Foam_tile: -0.48
     - _Metalic: 0
     - _Normal_Speed: 5
-    - _Normal_strenght: 0.221
+    - _Normal_strenght: 0.5
     - _Normal_tile: -0.07
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -103,7 +103,7 @@ Material:
     - _Normal_2: {r: -1, g: 0, b: 0, a: 0}
     - _Surface_water_color: {r: 0, g: 0.9041667, b: 1, a: 0}
     - _Vector2: {r: 0, g: 0.3, b: 0, a: 0}
-    - _Water_color_1: {r: 0.22745098, g: 0.22965036, b: 0.3372549, a: 0}
-    - _Water_color_2: {r: 0.14542541, g: 0.3083576, b: 0.3584906, a: 0}
+    - _Water_color_1: {r: 0.1924457, g: 0.21690272, b: 0.6754716, a: 0}
+    - _Water_color_2: {r: 0.23741545, g: 0.26768422, b: 0.3584906, a: 0}
     - _surface_water_color: {r: 0.5660378, g: 0.18422927, b: 0.18422927, a: 0}
   m_BuildTextureStacks: []

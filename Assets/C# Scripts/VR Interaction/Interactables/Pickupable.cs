@@ -19,7 +19,7 @@ public class Pickupable : Interactable
     [Header("How hard can you throw this object")]
     [SerializeField] private float throwVelocityMultiplier = 1;
 
-    [Header("Does this object recieve angular verlocity when thrown?")]
+    [Header("Does this object recieve angular velocity when thrown?")]
     [SerializeField] private bool throwUseAngularVelocity = true;
 
     [Header("Max velocity on each axis (direction is kept)")]

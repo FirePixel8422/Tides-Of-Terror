@@ -277,7 +277,7 @@ public class InteractionController : MonoBehaviour
 
     #region Drop and Pickup
 
-    private void Pickup(Interactable toPickupObject)
+    public void Pickup(Interactable toPickupObject)
     {
         //if the object that is trying to be picked up by this hand, is held by the other hand and canSwapItemFromHands is false, return
         if (toPickupObject.interactable == false || (toPickupObject.heldByPlayer && settings.canSwapItemFromHands == false))

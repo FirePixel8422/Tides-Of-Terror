@@ -139,8 +139,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.25
-  m_Center: {x: 0.00000033527613, y: 0.10157335, z: -0.087439835}
+  m_Radius: 0.4
+  m_Center: {x: 0.00000033527613, y: 0.22, z: -0.087439835}
 --- !u!82 &3850481020801729073
 AudioSource:
   m_ObjectHideFlags: 0
@@ -782,9 +782,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   movePower: 5
+  rotPower: 2.5
   velocityDecayPower: 0.1
   keepObjectUpRight: 1
-  rotPower: 1
+  uprightRotPower: 1
   throwVelocityMultiplier: 1
   throwUseAngularVelocity: 1
   throwVelocityClamp:

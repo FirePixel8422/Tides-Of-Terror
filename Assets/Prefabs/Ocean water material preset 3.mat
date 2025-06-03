@@ -91,10 +91,11 @@ Material:
     - _QueueOffset: 0
     - _Refraction: 1
     - _Smoothness: 0.588
+    - _SphereCutoff: 1
     - _Water_foam_boolean: 1
     - _Wave_Boolean: 0
-    - _Wave_Scale: 1.5
-    - _Wave_Speed: 7.35
+    - _Wave_Scale: 3
+    - _Wave_Speed: 10
     - _Wave_Strenght: 9.5
     - _Wave_TIle: 0.1
     m_Colors:
