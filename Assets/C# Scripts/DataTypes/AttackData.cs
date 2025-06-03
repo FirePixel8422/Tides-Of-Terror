@@ -9,4 +9,5 @@ public struct AttackData
     public float attackTime;
 
     public int attackId;
+    public int followUpAttackDataId;
 }

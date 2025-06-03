@@ -104,25 +104,25 @@ public class Pickupable : Interactable
     {
         Drop(handType);
 
-		float3 targetVelocity = throwVelocity * throwVelocityMultiplier + moveVelocity;
+        float3 targetVelocity = throwVelocity * throwVelocityMultiplier + moveVelocity;
 
-		//only if velocity is MORE then minRequiredVelocityXYZ set rigidBody velocity to targetVelocity
-		if (targetVelocity.AbsoluteSum() > throwMinRequiredVelocityXYZ)
-		{
-			if (throwUseAngularVelocity)
-			{
-				rb.angularVelocity = angularVelocity;
-			}
+        //only if velocity is MORE then minRequiredVelocityXYZ set rigidBody velocity to targetVelocity
+        if (math.abs(targetVelocity.x) + math.abs(targetVelocity.y) + math.abs(targetVelocity.z) > throwMinRequiredVelocityXYZ)
+        {
+            if (throwUseAngularVelocity)
+            {
+                rb.angularVelocity = angularVelocity;
+            }
 
-			// Calculate the radius vector from the center of mass to the point
-			float3 radius = transform.position - rb.worldCenterOfMass;
+            // Calculate the radius vector from the center of mass to the point
+            float3 radius = transform.position - rb.worldCenterOfMass;
 
-			// Calculate the linear velocity caused by angular velocity
-			float3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
+            // Calculate the linear velocity caused by angular velocity
+            float3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
 
-			rb.velocity = VectorLogic.ClampDirection(targetVelocity + tangentialVelocity, throwVelocityClamp);
-		}
-	}
+            rb.velocity = VectorLogic.ClampDirection(targetVelocity + tangentialVelocity, throwVelocityClamp);
+        }
+    }
 
 
     public void TogglePhysics(bool state, bool keepColliders = false)
@@ -161,7 +161,7 @@ public class Pickupable : Interactable
         if (debugRBCenterOfMass && TryGetComponent(out rb))
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.03f); // Visualize center of mass
+            Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.3f); // Visualize center of mass
         }
     }
 #endif

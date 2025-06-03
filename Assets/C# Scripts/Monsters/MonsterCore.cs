@@ -18,6 +18,13 @@ public class MonsterCore : MonoBehaviour
     [SerializeField] protected float attackInterval = 5;
     [SerializeField] protected float swapSideChance = 33;
 
+    [SerializeField] protected float sinkSpeed = 4f;
+    [SerializeField] protected float sinkY = -10;
+
+    [SerializeField] protected float riseDelay = 4;
+    [SerializeField] protected float riseSpeed = 7.5f;
+    [SerializeField] protected float riseY = 0;
+
 
 
     protected virtual void Start()
@@ -27,8 +34,6 @@ public class MonsterCore : MonoBehaviour
         transform.parent.transform.SetParent(BoatEngine.Instance.transform, false, false);
 
         StartCoroutine(AttackLoop());
-
-        SwapSide();
     }
 
     public virtual void Hit(float damage)
@@ -51,6 +56,11 @@ public class MonsterCore : MonoBehaviour
 
     private IEnumerator AttackLoop()
     {
+        //select first side
+        SwapSide();
+        //and animate it
+        StartCoroutine(SwapSideAnimation());
+
         while (true)
         {
             yield return new WaitForSeconds(attackData[cAttackId].attackTime);
@@ -59,11 +69,66 @@ public class MonsterCore : MonoBehaviour
 
             yield return new WaitForSeconds(attackInterval);
 
-            if (EzRandom.Chance(swapSideChance))
+            //if attack has a follow up, do that
+            if (attackData[cAttackId].followUpAttackDataId != -1)
             {
-                SwapSide();
+                cAttackId = attackData[cAttackId].followUpAttackDataId;
+            }
+            else
+            {
+                //otheriwse assign new attack and chance to swap direction
+                if (EzRandom.Chance(swapSideChance))
+                {
+                    SwapSide();
+
+                    //await finish of animation
+                    yield return SwapSideAnimation();
+                }
+
+                SwapAttack();
             }
         }
+    }
+
+    private IEnumerator SwapSideAnimation()
+    {
+        while (transform.position.y > sinkY)
+        {
+            yield return null;
+
+            transform.position -= sinkSpeed * Time.deltaTime * Vector3.up;
+        }
+
+        transform.position = new Vector3(transform.position.x, sinkY, transform.position.z);
+
+        yield return new WaitForSeconds(riseDelay);
+
+        float rotY = 0;
+        switch (attackPosition)
+        {
+            case AttackPosition.left:
+                rotY = leftRot;
+                break;
+
+            case AttackPosition.right:
+                rotY = rightRot;
+                break;
+
+            case AttackPosition.front:
+                rotY = frontRot;
+                break;
+        }
+
+        transform.parent.localRotation = Quaternion.Euler(0, rotY, 0);
+
+        while (transform.position.y < riseY)
+        {
+            yield return null;
+
+            transform.position += riseSpeed * Time.deltaTime * Vector3.up;
+        }
+
+        transform.position = new Vector3(transform.position.x, riseY, transform.position.z);
     }
 
     [ContextMenu("Swap Side")]

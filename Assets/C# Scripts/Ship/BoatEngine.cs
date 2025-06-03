@@ -1,4 +1,5 @@
 using Unity.Mathematics;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 
@@ -18,7 +19,10 @@ public class BoatEngine : MonoBehaviour
     [SerializeField] private float forwardSwayInterval = 2;
     [SerializeField] private float turnSwaySpeed = 12;
 
+    [SerializeField] private float health = 100;
+
     public float swayAngle;
+    public bool locked;
 
 
     private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
@@ -27,6 +31,8 @@ public class BoatEngine : MonoBehaviour
 
     private void OnUpdate()
     {
+        if (locked) return;
+
         transform.position += enginePower * Time.deltaTime * (Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0) * Vector3.forward);
 
         float forwardSway = math.sin(Time.time * forwardSwayInterval) * forwardSwaySpeed;

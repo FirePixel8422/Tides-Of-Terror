@@ -22,7 +22,7 @@ MonoBehaviour:
   canSwapItemFromHands: 1
   shouldThrowVelAddMovementVel: 1
   pickupsUseOldHandVel: 1
-  throwVelocityMultiplier: 2
+  throwVelocityMultiplier: 1
   maxExpectedObjectInSphere: 15
   pickupVibrationParams:
     amplitude: 0.6
