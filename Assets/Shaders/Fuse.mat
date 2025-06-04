@@ -126,6 +126,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Emmision: {r: 22.247946, g: 8.891314, b: 0, a: 1}
     - _FireColor: {r: 23.968628, g: 3.1192374, b: 0, a: 1}
     - _MinMaxTransparency: {r: 0.6556, g: 0.687, b: 0, a: 0}
     - _ScrollDirection: {r: 0, g: 0.05, b: 0, a: 0}

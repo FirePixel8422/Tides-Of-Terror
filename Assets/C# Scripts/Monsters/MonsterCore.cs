@@ -7,7 +7,7 @@ public class MonsterCore : MonoBehaviour
 {
     [SerializeField] private float health;
 
-    private MonsterStateMachine stateMachine;
+    protected MonsterStateMachine stateMachine;
 
     [SerializeField] protected float leftRot, rightRot, frontRot;
     [SerializeField] protected AttackPosition attackPosition;
@@ -25,6 +25,10 @@ public class MonsterCore : MonoBehaviour
     [SerializeField] protected float riseSpeed = 7.5f;
     [SerializeField] protected float riseY = 0;
 
+    [SerializeField] protected float deathDelay = 5;
+
+    private bool attackCanceled;
+
 
 
     protected virtual void Start()
@@ -32,8 +36,15 @@ public class MonsterCore : MonoBehaviour
         stateMachine = GetComponent<MonsterStateMachine>();
 
         transform.parent.transform.SetParent(BoatEngine.Instance.transform, false, false);
+        transform.position = new Vector3(transform.position.x, sinkY, transform.position.z);
 
         StartCoroutine(AttackLoop());
+    }
+
+    [ContextMenu("Hit DEBUG")]
+    private void HitDEBUG()
+    {
+        Hit(100);
     }
 
     public virtual void Hit(float damage)
@@ -42,20 +53,30 @@ public class MonsterCore : MonoBehaviour
 
         if (health <= 0)
         {
-            stateMachine.Die();
-
-            StopAllCoroutines();
-            Destroy(gameObject, 0.5f);
+            Death();
         }
         else
         {
             stateMachine.GetHurt();
+            attackCanceled = true;
         }
+    }
+
+    protected virtual void Death()
+    {
+        stateMachine.Die();
+
+        StopAllCoroutines();
+        Destroy(transform.parent.gameObject, deathDelay);
+
+        ZoneLoader.Instance.EndEncounter();
     }
 
 
     private IEnumerator AttackLoop()
     {
+        yield return null;
+        
         //select first side
         SwapSide();
         //and animate it
@@ -63,11 +84,29 @@ public class MonsterCore : MonoBehaviour
 
         while (true)
         {
-            stateMachine.Attack(attackData[cAttackId].attackId);
+            //cancel attack
+            if (attackCanceled)
+            {
+                attackCanceled = false;
+            }
+            else
+            {
+                stateMachine.Idle();
+            }
+
+            Attack();
 
             yield return new WaitForSeconds(attackData[cAttackId].attackTime);
 
-            stateMachine.Idle();
+            //cancel attack
+            if (attackCanceled)
+            {
+                attackCanceled = false;
+            }
+            else
+            {
+                stateMachine.Idle();
+            }
 
             yield return new WaitForSeconds(attackInterval);
 
@@ -90,6 +129,11 @@ public class MonsterCore : MonoBehaviour
                 SwapAttack();
             }
         }
+    }
+
+    protected virtual void Attack()
+    {
+        stateMachine.Attack(attackData[cAttackId].attackId);
     }
 
 

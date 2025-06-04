@@ -32,6 +32,8 @@ public class FragmentController : MonoBehaviour
     {
         FragmentScalar shatterObj = GetComponentInChildren<FragmentScalar>(true);
 
+        print(shatterObj == null);
+
         Rigidbody[] shatterPieces = shatterObj.GetComponentsInChildren<Rigidbody>(true);
 
         shatterObj.transform.parent = null;

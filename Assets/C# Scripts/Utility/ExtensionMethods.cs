@@ -119,6 +119,12 @@ public static class ExtensionMethods
         return component != null;
     }
 
+    public static bool TryFindObjectsOfType<T>(this UnityEngine.Object obj, out T[] component, bool includeInactive = false) where T : Component
+    {
+        component = UnityEngine.Object.FindObjectsOfType<T>(includeInactive);
+        return component != null;
+    }
+
     #endregion
 
 

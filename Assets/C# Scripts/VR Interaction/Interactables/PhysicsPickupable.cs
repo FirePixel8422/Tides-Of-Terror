@@ -39,8 +39,10 @@ public class PhysicsPickupable : Interactable
 
     protected override void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        if (TryGetComponent(out rb))
+        {
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        }
     }
 
     public override void Pickup(InteractionController handInteractor)

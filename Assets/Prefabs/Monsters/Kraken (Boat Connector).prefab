@@ -1178,7 +1178,7 @@ PrefabInstance:
     - target: {fileID: 2426225652368265736, guid: 89bb16e2b74528d42b69121ccb752b51,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 67.25
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 2426225652368265736, guid: 89bb16e2b74528d42b69121ccb752b51,
         type: 3}
@@ -4695,10 +4695,10 @@ MonoBehaviour:
     attackId: 7
     followUpAttackDataId: -1
   cAttackId: 0
-  attackInterval: 0
+  attackInterval: 5
   swapSideChance: 33
   sinkSpeed: 20
   sinkY: -35
   riseDelay: 0.75
   riseSpeed: 30
-  riseY: 0
+  riseY: 4.9

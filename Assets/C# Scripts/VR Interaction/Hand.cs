@@ -47,12 +47,16 @@ public class Hand : MonoBehaviour
     [BurstCompile]
     public void SendVibration(float amplitude, float duration)
     {
+        if (gameObject.activeInHierarchy == false) return;
+
         hapticImpulsePlayer?.SendHapticImpulse(amplitude, duration);
     }
     
     [BurstCompile]
     public void SendVibration(VibrationParamaters vibrationParams)
     {
+        if (gameObject.activeInHierarchy == false) return;
+
         if (vibrationParams.pulseCount > 1)
         {
             StartCoroutine(PulseVibration(vibrationParams.amplitude, vibrationParams.duration, vibrationParams.pulseCount, vibrationParams.pulseInterval));

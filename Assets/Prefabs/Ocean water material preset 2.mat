@@ -60,7 +60,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Albedo: 1
-    - _Depth: -8.88
+    - _Depth: 0
     - _DepthFade_distance: 28.71
     - _Depth_2: 0
     - _Depth_fade: 2.88
@@ -70,40 +70,40 @@ Material:
     - _Foam_Cutoff: 1.1
     - _Foam_Distance: 1
     - _Foam_Scale: 15000
-    - _Foam_Speed: 1.33
-    - _Foam_Tilling: 7.43
+    - _Foam_Speed: 2
+    - _Foam_Tilling: 7.28
     - _Foam_amount: 5
     - _Foam_cutoff: 1.36
-    - _Foam_distance: 0.36
+    - _Foam_distance: 0.2
     - _Foam_strenght: 39.3
     - _Foam_strenght_1: 1
     - _Foam_texture_speed: 0.0001
     - _Foam_tile: -0.48
-    - _Metalic: 0
-    - _Normal_Speed: 5
-    - _Normal_strenght: 0.5
-    - _Normal_tile: -0.07
+    - _Metalic: 0.379
+    - _Normal_Speed: 31.25
+    - _Normal_strenght: 1
+    - _Normal_tile: 0.05
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Refraction: 1
-    - _Smoothness: 0.722
+    - _Smoothness: 0.662
     - _SphereCutoff: 0.975
-    - _Water_foam_boolean: 0
-    - _Wave_Scale: 1.5
-    - _Wave_Speed: 20
-    - _Wave_Strenght: 9.5
-    - _Wave_TIle: 0.05
+    - _Water_foam_boolean: 1
+    - _Wave_Scale: 0.3
+    - _Wave_Speed: 100
+    - _Wave_Strenght: 10
+    - _Wave_TIle: 100
     m_Colors:
     - _Deep_water_color: {r: 1, g: 1, b: 1, a: 0}
     - _Deepwater_color: {r: 0, g: 0.021459341, b: 1, a: 0}
-    - _Depth_color: {r: 0.010813437, g: 0.50132996, b: 0.764151, a: 0}
+    - _Depth_color: {r: 1, g: 0.016212974, b: 0, a: 1}
     - _Foam_Color: {r: 1, g: 1, b: 1, a: 0}
     - _Foam_color: {r: 1024, g: 1024, b: 1024, a: 0}
-    - _Normal_1: {r: 1, g: 0, b: 0, a: 0}
-    - _Normal_2: {r: -1, g: 0, b: 0, a: 0}
+    - _Normal_1: {r: 1, g: 2, b: 0, a: 0}
+    - _Normal_2: {r: 1, g: 2, b: 0, a: 0}
     - _Surface_water_color: {r: 0, g: 0.9041667, b: 1, a: 0}
     - _Vector2: {r: 0, g: 0.3, b: 0, a: 0}
-    - _Water_color_1: {r: 0.1924457, g: 0.21690272, b: 0.6754716, a: 0}
-    - _Water_color_2: {r: 0.23741545, g: 0.26768422, b: 0.3584906, a: 0}
+    - _Water_color_1: {r: 0.04049125, g: 0.2821049, b: 0.4566037, a: 0.9843137}
+    - _Water_color_2: {r: 0.3660378, g: 0.3584408, b: 0.3584408, a: 1}
     - _surface_water_color: {r: 0.5660378, g: 0.18422927, b: 0.18422927, a: 0}
   m_BuildTextureStacks: []

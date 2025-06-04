@@ -79,8 +79,11 @@ public class Cannon : Interactable
         fuseShader.SetFloat(TransparencyFloatId, 1);
 
         //set velocity
-        cartRigidBody.velocity = -transform.forward * backThrustPower + transform.up * backThrustUpwardsPower;
-        cartRigidBody.angularVelocity = transform.up * backThrustAngularPower;
+        if (cartRigidBody != null)
+        {
+            cartRigidBody.velocity = -transform.forward * backThrustPower + transform.up * backThrustUpwardsPower;
+            cartRigidBody.angularVelocity = transform.up * backThrustAngularPower;
+        }
 
         //call shoot animation
         cannonAnim.SetTrigger("Shoot");

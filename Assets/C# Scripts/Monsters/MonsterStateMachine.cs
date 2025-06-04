@@ -39,7 +39,7 @@ public class MonsterStateMachine : MonoBehaviour
 
 
     /// <returns>true if the animation has changed, false otherwise</returns>
-    private bool TryTransitionAnimation(string animationString, float transitionDuration = 0.25f, float speed = 1, int layer = 0)
+    private bool TryTransitionAnimation(string animationString, float transitionDuration = 0.5f, float speed = 1, int layer = 0)
     {
         //if the new animation is the same as current, return false
         if (currentAnimation == animationString) return false;
@@ -79,12 +79,10 @@ public class MonsterStateMachine : MonoBehaviour
     {
         if (dead) return;
 
-        string cAnim = currentAnimation;
-
         TryTransitionAnimation(hurtAnimation);
 
         StopAllCoroutines();
-        StartCoroutine(AutoTransition(cAnim));
+        StartCoroutine(AutoTransition(idleAnimation));
     }
 
     public void Die()
