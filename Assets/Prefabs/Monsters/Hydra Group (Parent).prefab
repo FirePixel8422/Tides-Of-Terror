@@ -462,7 +462,7 @@ MonoBehaviour:
     followUpAttackDataId: -1
   cAttackId: 0
   attackInterval: 5
-  swapSideChance: 25
+  swapSideChance: 50
   sinkSpeed: 15
   sinkY: -35
   riseDelay: 3.5
@@ -702,7 +702,7 @@ MonoBehaviour:
     followUpAttackDataId: -1
   cAttackId: 0
   attackInterval: 5
-  swapSideChance: 25
+  swapSideChance: 50
   sinkSpeed: 15
   sinkY: -35
   riseDelay: 3.5
@@ -1169,7 +1169,7 @@ MonoBehaviour:
     followUpAttackDataId: -1
   cAttackId: 0
   attackInterval: 5
-  swapSideChance: 25
+  swapSideChance: 50
   sinkSpeed: 15
   sinkY: -35
   riseDelay: 3.5

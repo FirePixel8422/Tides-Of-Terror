@@ -17,13 +17,13 @@ MonoBehaviour:
   interactablesLayer:
     serializedVersion: 2
     m_Bits: 64
-  interactRayCastRange: 0.4
-  overlapSphereSize: 0.15
+  interactRayCastRange: 0.5
+  overlapSphereSize: 0.25
   canSwapItemFromHands: 1
   shouldThrowVelAddMovementVel: 1
   pickupsUseOldHandVel: 1
   throwVelocityMultiplier: 1
-  maxExpectedObjectInSphere: 15
+  maxExpectedObjectInSphere: 5
   pickupVibrationParams:
     amplitude: 0.6
     duration: 0.25

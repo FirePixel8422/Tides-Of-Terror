@@ -195,8 +195,8 @@ MonoBehaviour:
   connectedHandController: {fileID: 0}
   pickupPosOffset: {x: 0, y: 0, z: 0}
   pickUpRotOffset: {x: 0, y: 0, z: 0}
-  throwVelocityMultiplier: 0.75
-  throwUseAngularVelocity: 1
+  throwVelocityMultiplier: 8.5
+  throwUseAngularVelocity: 0
   throwVelocityClamp:
     x: 10
     y: 10
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 15
-  hitType: 1
+  hitType: 2
   onlyBreakOnMonster: 0
   impactAudioClips: []
   minVolume: 0

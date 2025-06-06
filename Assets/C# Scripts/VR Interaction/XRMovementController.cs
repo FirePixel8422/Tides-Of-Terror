@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class XRMovementController : MonoBehaviour
 {
     [SerializeField] private Transform headTransform;
-    [SerializeField] private Transform turnTransform;
 
     [SerializeField] private float moveSpeed = 3;
     [SerializeField] private float turnSpeed = 90;
@@ -16,6 +15,7 @@ public class XRMovementController : MonoBehaviour
     [SerializeField] private Vector2 turnInput;
 
     private Rigidbody rb;
+    public static Collider PlayerCollider;
 
 
 
@@ -33,15 +33,20 @@ public class XRMovementController : MonoBehaviour
     }
 
 
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+
+        PlayerCollider = GetComponent<Collider>();
     }
 
 
     private void OnUpdate()
     {
         Move();
+    }
+    private void LateUpdate()
+    {
         Turn();
     }
 
@@ -77,28 +82,9 @@ public class XRMovementController : MonoBehaviour
 
     private void Turn()
     {
-#if UNITY_EDITOR
-
-        if (overrideMouseControls)
-        {
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -85f, 85f);
-
-            yRotation += mouseX;
-
-            transform.localRotation = Quaternion.Euler(0, yRotation, 0f);
-            turnTransform.localRotation = Quaternion.Euler(xRotation, 0, 0f);
-
-            return;
-        }
-#endif
-
         if (turnInput.x != 0)
         {
-            turnTransform.Rotate(Vector3.up, turnInput.x * turnSpeed * Time.deltaTime);
+            UnityEngine.InputSystem.XR.TrackedPoseDriver.rotYOffset += turnInput.x * turnSpeed * Time.deltaTime;
         }
     }
 

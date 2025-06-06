@@ -31,13 +31,13 @@ public class BoatEngine : MonoBehaviour
 
     private void OnUpdate()
     {
-        if (locked) return;
-
-        transform.position += enginePower * Time.deltaTime * (Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0) * Vector3.forward);
-
         float forwardSway = math.sin(Time.time * forwardSwayInterval) * forwardSwaySpeed;
         float turnSway = -swayAngle * turnSwaySpeed;
 
         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, turnSway + forwardSway);
+
+        if (locked) return;
+
+        transform.position += enginePower * Time.deltaTime * (Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0) * Vector3.forward);
     }
 }

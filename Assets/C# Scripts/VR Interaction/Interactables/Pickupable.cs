@@ -42,6 +42,8 @@ public class Pickupable : Interactable
         List<Collider> coll = GetComponents<Collider>().ToList();
         for (int i = 0; i < coll.Count; i++)
         {
+            Physics.IgnoreCollision(coll[i], XRMovementController.PlayerCollider, true);
+
             if (coll[i].isTrigger)
             {
                 coll.RemoveAt(i);

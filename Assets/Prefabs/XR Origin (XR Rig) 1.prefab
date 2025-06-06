@@ -270,16 +270,12 @@ MonoBehaviour:
   rayTransform: {fileID: 3306778258520366894}
   overlapSphereTransform: {fileID: 1867399048737359798}
   heldItemHolder: {fileID: 5602493467922571163}
-  isHoldingObject: 0
+  objectHeld: 0
   objectSelected: 0
-  toClickButton: {fileID: 0}
-  uiSelected: 0
-  savedLocalVelocity: []
-  savedAngularVelocity: []
-  msVelSaveInterval: 66
-  msVelSaveTimeAmount: 500
-  maxFrames: 0
-  frameIndex: 0
+  frameAmount: 0
+  DEBUG_ControlMode: 0
+  DEBUG_MoveSpeed: 1
+  DEBUG_RotSpeed: 1
 --- !u!114 &8839250880210118461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1149,8 +1145,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2955459381941041142}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.28363863, y: 1.0907004, z: -0.05115608}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.28363872, y: 1.0907001, z: -0.051156044}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2068,10 +2064,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da88742168965e5438c57c367bf1ed3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerButtonPressPercent: 0
-  _cButtonPressPercent: 0
   valueUpdateSpeed: 12.5
-  localRot: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  controllerButtonPressPercent: 0
+  cButtonPressPercent: 0
 --- !u!1 &5358606074552446672
 GameObject:
   m_ObjectHideFlags: 0
@@ -2166,6 +2161,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2238419584762075703}
+  - {fileID: 4983806200152022315}
   - {fileID: 3859844365817162340}
   - {fileID: 6965527270327743665}
   m_Father: {fileID: 1692984767545948602}
@@ -2571,6 +2567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   headTransform: {fileID: 2238419584762075703}
+  fakeTurnTransform: {fileID: 0}
   turnTransform: {fileID: 1692984767545948602}
   moveSpeed: 3
   turnSpeed: 90
@@ -2702,6 +2699,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7045288485258309052}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7823608212262701434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4983806200152022315}
+  m_Layer: 0
+  m_Name: CameraRotator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4983806200152022315
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7823608212262701434}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6759419427820049792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7925326373405547407
 GameObject:
@@ -2943,16 +2971,12 @@ MonoBehaviour:
   rayTransform: {fileID: 2800800790168592261}
   overlapSphereTransform: {fileID: 7428604264357561000}
   heldItemHolder: {fileID: 7835782061237029038}
-  isHoldingObject: 0
+  objectHeld: 0
   objectSelected: 0
-  toClickButton: {fileID: 0}
-  uiSelected: 0
-  savedLocalVelocity: []
-  savedAngularVelocity: []
-  msVelSaveInterval: 66
-  msVelSaveTimeAmount: 500
-  maxFrames: 0
-  frameIndex: 0
+  frameAmount: 1
+  DEBUG_ControlMode: 0
+  DEBUG_MoveSpeed: 1
+  DEBUG_RotSpeed: 1
 --- !u!114 &4872976304098256334
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3170,10 +3194,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da88742168965e5438c57c367bf1ed3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerButtonPressPercent: 0
-  _cButtonPressPercent: 0
   valueUpdateSpeed: 12.5
-  localRot: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  controllerButtonPressPercent: 0
+  cButtonPressPercent: 0
 --- !u!1 &8866801911700816588
 GameObject:
   m_ObjectHideFlags: 0

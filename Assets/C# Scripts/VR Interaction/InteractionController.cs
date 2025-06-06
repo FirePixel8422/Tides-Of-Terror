@@ -1,25 +1,22 @@
 using System;
-using Unity.Burst;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-[BurstCompile]
 public class InteractionController : MonoBehaviour
 {
     [HideInInspector]
     public Hand hand;
 
-    public HandInteractionSettingsSO Settings;
+    [SerializeField] private HandInteractionSettingsSO settings;
+    public HandInteractionSettingsSO Settings => settings;
+
+    [SerializeField] private Transform rayTransform;
+    [SerializeField] private Transform overlapSphereTransform;
 
 
-    [SerializeField]
-    private Transform rayTransform;
-
-    [SerializeField]
-    private Transform overlapSphereTransform;
-
-    public Transform HeldItemHolder;
+    [SerializeField] private Transform heldItemHolder;
+    public Transform HeldItemHolder => heldItemHolder;
 
 
     private Interactable heldObject;
@@ -33,8 +30,6 @@ public class InteractionController : MonoBehaviour
     private RaycastHit rayHit;
 
 
-
-    [BurstCompile]
     public void OnClick(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
@@ -51,29 +46,27 @@ public class InteractionController : MonoBehaviour
         }
     }
 
-
-    [BurstCompile]
     private void Start()
     {
         hand = GetComponent<Hand>();
 
-        hitObjectsInSphere = new Collider[Settings.maxExpectedObjectInSphere];
+        hitObjectsInSphere = new Collider[settings.maxExpectedObjectInSphere];
 
 
-        if (Settings.shouldThrowVelAddMovementVel)
+        if (settings.shouldThrowVelAddMovementVel)
         {
             bodyMovementTransform = transform.root;
         }
 
-        savedLocalVelocity = new Vector3[frameAmount];
+        savedLocalThrowVelocity = new Vector3[frameAmount];
+        savedLocalBodyVelocity = new Vector3[frameAmount];
         savedAngularVelocity = new Vector3[frameAmount];
-
-        UpdateScheduler.RegisterUpdate(OnUpdate);
     }
 
 
+    private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
+    private void OnDisable() => UpdateScheduler.UnregisterUpdate(OnUpdate);
 
-    [BurstCompile]
     public void OnUpdate()
     {
         //if you are holding nothing, scan for objects by using a raycast and a sphere around you hand
@@ -83,30 +76,32 @@ public class InteractionController : MonoBehaviour
         }
 
         //if you are holding something and it is throwable (Or "pickupsUseOldHandVel" is true), start doing velocity calculations
-        if (Settings.pickupsUseOldHandVel || (heldObject != null && heldObject))
+        if (settings.pickupsUseOldHandVel || (heldObject != null && heldObject))
         {
             CalculateHandVelocity();
         }
+
+
+#if UNITY_EDITOR
+        DEBUG_Update();
+#endif
     }
-
-
 
 
     #region UpdateToPickupObject
 
-    [BurstCompile]
     private void UpdateToPickObject()
     {
-        if (Settings.interactionPriorityMode == InteractionPriorityMode.SphereTrigger)
+        if (settings.interactionPriorityMode == InteractionPriorityMode.SphereTrigger)
         {
             //if "GrabState.OnSphereTrigger" is true (OverlapSphere is enabled)
-            if (Settings.grabState.HasFlag(GrabState.OnSphereTrigger) && CreateOverlapSphere(overlapSphereTransform.position, Settings.overlapSphereSize, Settings.interactablesLayer))
+            if (settings.grabState.HasFlag(GrabState.OnSphereTrigger) && CreateOverlapSphere(overlapSphereTransform.position, settings.overlapSphereSize, settings.interactablesLayer))
             {
                 return;
             }
 
             //if overlapSphere missed and "GrabState.OnRaycast" is true (rayCasts are enabled) and there are no objects near your hand, check if there is one in front of your hand
-            if (Settings.grabState.HasFlag(GrabState.OnRaycast) && ShootRayCast())
+            if (settings.grabState.HasFlag(GrabState.OnRaycast) && ShootRayCast())
             {
                 return;
             }
@@ -114,13 +109,13 @@ public class InteractionController : MonoBehaviour
         else
         {
             //if "GrabState.OnRaycast" is true (rayCasts are enabled) and there are no objects near your hand, check if there is one in front of your hand
-            if (Settings.grabState.HasFlag(GrabState.OnRaycast) && ShootRayCast())
+            if (settings.grabState.HasFlag(GrabState.OnRaycast) && ShootRayCast())
             {
                 return;
             }
 
             //if raycast missed and "GrabState.OnSphereTrigger" is true (OverlapSphere is enabled)
-            if (Settings.grabState.HasFlag(GrabState.OnSphereTrigger) && CreateOverlapSphere(overlapSphereTransform.position, Settings.overlapSphereSize, Settings.interactablesLayer))
+            if (settings.grabState.HasFlag(GrabState.OnSphereTrigger) && CreateOverlapSphere(overlapSphereTransform.position, settings.overlapSphereSize, settings.interactablesLayer))
             {
                 return;
             }
@@ -134,7 +129,6 @@ public class InteractionController : MonoBehaviour
 
 
     /// <returns>OverlapSphere Succes State</returns>
-    [BurstCompile]
     private bool CreateOverlapSphere(Vector3 overlapSphereTransformPos, float overlapSphereSize, int interactablesLayer)
     {
         //get all objects near your hand
@@ -188,12 +182,11 @@ public class InteractionController : MonoBehaviour
 
 
     /// <returns>RayCast Succes State</returns>
-    [BurstCompile]
     private bool ShootRayCast()
     {
         Ray ray = new Ray(rayTransform.position, rayTransform.forward);
 
-        if (Physics.Raycast(ray, out rayHit, Settings.interactRayCastRange, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide)
+        if (Physics.Raycast(ray, out rayHit, settings.interactRayCastRange, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide)
                 && rayHit.transform.TryGetComponent(out Interactable new_ToPickupObject))
         {
             //if you are holdijg nothing, or the new_ToPickupObject isnt already selected, select the object and deselect potential previous selected object
@@ -213,11 +206,8 @@ public class InteractionController : MonoBehaviour
     #endregion
 
 
-
-
     #region Select/Deselect Object
 
-    [BurstCompile]
     private void SelectNewObject(Interactable new_ToPickupObject)
     {
         if (objectSelected)
@@ -229,10 +219,9 @@ public class InteractionController : MonoBehaviour
 
         objectSelected = true;
 
-        hand.SendVibration(Settings.selectPickupVibrationParams);
+        hand.SendVibration(settings.selectPickupVibrationParams);
     }
 
-    [BurstCompile]
     private void DeSelectObject()
     {
         if (objectSelected)
@@ -246,15 +235,12 @@ public class InteractionController : MonoBehaviour
     #endregion
 
 
-
-
     #region Drop and Pickup
 
-    [BurstCompile]
     public void Pickup(Interactable toPickupObject)
     {
         //if the object that is trying to be picked up by this hand, is held by the other hand and canSwapItemFromHands is false, return
-        if (toPickupObject.interactable == false || (toPickupObject.heldByPlayer && Settings.canSwapItemFromHands == false))
+        if (toPickupObject.interactable == false || (toPickupObject.heldByPlayer && settings.canSwapItemFromHands == false))
         {
             return;
         }
@@ -264,20 +250,21 @@ public class InteractionController : MonoBehaviour
         heldObject = toPickupObject;
         objectHeld = true;
 
-        hand.SendVibration(Settings.pickupVibrationParams);
+        hand.SendVibration(settings.pickupVibrationParams);
     }
 
 
-    [BurstCompile]
     private void Drop()
     {
         //drop item if it is throwable
         if (heldObject.isThrowable)
         {
-            Vector3 velocity = Vector3.zero;
+            Vector3 throwVelocity = Vector3.zero;
+            Vector3 bodyVelocity = Vector3.zero;
             for (int i = 0; i < frameAmount; i++)
             {
-                velocity += savedLocalVelocity[i] / frameAmount;
+                throwVelocity += savedLocalThrowVelocity[i] / frameAmount;
+                bodyVelocity += savedLocalBodyVelocity[i] / frameAmount;
             }
 
             Vector3 angularVelocity = Vector3.zero;
@@ -286,7 +273,7 @@ public class InteractionController : MonoBehaviour
                 angularVelocity += savedAngularVelocity[i] / frameAmount;
             }
 
-            heldObject.Throw(hand.handType, velocity, 0, angularVelocity);
+            heldObject.Throw(hand.handType, throwVelocity * settings.throwVelocityMultiplier, bodyVelocity, angularVelocity);
         }
         else
         {
@@ -297,9 +284,18 @@ public class InteractionController : MonoBehaviour
         objectHeld = false;
     }
 
+    public void ForceDrop()
+    {
+        if (objectHeld)
+        {
+            heldObject.Drop(hand.handType);
+
+            heldObject = null;
+            objectHeld = false;
+        }
+    }
+
     #endregion
-
-
 
 
     #region CalculateHandVelocity
@@ -308,7 +304,8 @@ public class InteractionController : MonoBehaviour
     private Vector3 prevbodyTransformPos;
 
     private Vector3 prevTransformPos;
-    private Vector3[] savedLocalVelocity;
+    private Vector3[] savedLocalThrowVelocity;
+    private Vector3[] savedLocalBodyVelocity;
 
     private Quaternion prevRotation;
     private Vector3[] savedAngularVelocity;
@@ -318,20 +315,18 @@ public class InteractionController : MonoBehaviour
     private int frameIndex;
 
 
-
-    [BurstCompile]
     private void CalculateHandVelocity()
     {
         //Calculate velocity based on hand movement
-        savedLocalVelocity[frameIndex] = bodyMovementTransform.rotation * (transform.localPosition - prevTransformPos) * Settings.throwVelocityMultiplier / Time.deltaTime;
+        savedLocalThrowVelocity[frameIndex] = bodyMovementTransform.rotation * (transform.localPosition - prevTransformPos) / Time.deltaTime;
 
         prevTransformPos = transform.localPosition;
 
 
         //Add velocity based on player body
-        if (Settings.shouldThrowVelAddMovementVel)
+        if (settings.shouldThrowVelAddMovementVel)
         {
-            savedLocalVelocity[frameIndex] += (bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.deltaTime;
+            savedLocalBodyVelocity[frameIndex] += (bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.deltaTime;
 
             prevbodyTransformPos = bodyMovementTransform.localPosition;
         }
@@ -347,8 +342,6 @@ public class InteractionController : MonoBehaviour
         prevRotation = transform.rotation;
 
 
-
-
         frameIndex += 1;
         if (frameIndex == frameAmount)
         {
@@ -359,10 +352,69 @@ public class InteractionController : MonoBehaviour
     #endregion
 
 
-    private void OnDestroy()
+    
+
+#if UNITY_EDITOR
+
+    [SerializeField] private bool DEBUG_ControlMode;
+    [SerializeField] private float DEBUG_MoveSpeed = 1f;
+    [SerializeField] private float DEBUG_RotSpeed = 1f;
+    private void DEBUG_Update()
     {
-        UpdateScheduler.UnregisterUpdate(OnUpdate);
+        if (DEBUG_ControlMode == false) return;
+
+        Vector3 move = Vector3.zero;
+        float rot = 0;
+
+        if (Input.GetKey(KeyCode.W)) move += transform.forward;
+        if (Input.GetKey(KeyCode.S)) move -= transform.forward;
+        if (Input.GetKey(KeyCode.A)) move -= transform.right;
+        if (Input.GetKey(KeyCode.D)) move += transform.right;
+        if (Input.GetKey(KeyCode.LeftShift)) move -= transform.up;
+        if (Input.GetKey(KeyCode.Space)) move += transform.up;
+
+        if (Input.GetKey(KeyCode.Q)) rot -= 1;
+        if (Input.GetKey(KeyCode.E)) rot += 1;
+
+        transform.position += move * DEBUG_MoveSpeed * Time.deltaTime;
+        transform.Rotate(Vector3.up, rot * DEBUG_RotSpeed * Time.deltaTime);
+
+        if (Input.GetMouseButtonDown(0)) DEBUG_Pickup();
+        if (Input.GetMouseButtonUp(0) && objectHeld) Drop();
     }
 
-    public void ForceDrop() { }
+
+    [ContextMenu("Pickup (Debug, Forced)")]
+    private void DEBUG_ForcePickup()
+    {
+        if (objectSelected == false) return;
+
+        toPickupObject.Pickup(this);
+
+        heldObject = toPickupObject;
+        objectHeld = true;
+    }
+
+
+
+    [ContextMenu("Pickup")]
+    private void DEBUG_Pickup()
+    {
+        if (objectSelected == false) return;
+
+        //if the object that is trying to be picked up by this hand, is held by the other hand and canSwapItemFromHands is false, return
+        if (toPickupObject.interactable == false || (toPickupObject.heldByPlayer && settings.canSwapItemFromHands == false))
+        {
+            return;
+        }
+
+        toPickupObject.Pickup(this);
+
+        heldObject = toPickupObject;
+        objectHeld = true;
+
+        hand.SendVibration(settings.pickupVibrationParams);
+    }
+
+#endif
 }
