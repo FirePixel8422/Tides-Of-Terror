@@ -44,6 +44,12 @@ public class ZoneLoader : MonoBehaviour
     {
         BoatEngine.Instance.locked = false;
 
+        if (monsters.Count == 0)
+        {
+            GameRestartHandler.Instance.Win();
+            return;
+        }
+
         StartCoroutine(EncounterDelay());
     }
 }

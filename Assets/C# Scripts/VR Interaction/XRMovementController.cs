@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class XRMovementController : MonoBehaviour
 {
+    public static XRMovementController Instance { get; private set; }
+
     [SerializeField] private Transform headTransform;
 
     [SerializeField] private float moveSpeed = 3;
@@ -34,8 +36,9 @@ public class XRMovementController : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        Instance = this;
 
+        rb = GetComponent<Rigidbody>();
         PlayerCollider = GetComponent<Collider>();
     }
 
@@ -51,27 +54,6 @@ public class XRMovementController : MonoBehaviour
 
     private void Move()
     {
-
-#if UNITY_EDITOR
-
-        if (overrideMoveControls)
-        {
-            float moveX = Input.GetAxisRaw("Horizontal");
-            float moveZ = Input.GetAxisRaw("Vertical");
-
-            Vector3 overrideMoveInput = new Vector3(moveX, 0f, moveZ).normalized;
-
-            //set velocity to moveinput and XR head transforms forward direction
-            Vector3 overrideMoveDir = headTransform.TransformDirection(new Vector3(overrideMoveInput.x, 0, overrideMoveInput.y).normalized);
-            Vector3 overrideVel = overrideMoveDir * moveSpeed;
-
-            rb.velocity = new Vector3(overrideVel.x, rb.velocity.y, overrideVel.z);
-
-            return;
-        }
-#endif
-
-
         //set velocity to moveinput and XR head transforms forward direction
         Vector3 moveDir = headTransform.TransformDirection(new Vector3(moveInput.x, 0, moveInput.y));
         Vector3 vel = new Vector3(moveDir.x, 0, moveDir.z).normalized * moveSpeed;
@@ -86,17 +68,4 @@ public class XRMovementController : MonoBehaviour
             UnityEngine.InputSystem.XR.TrackedPoseDriver.rotYOffset += turnInput.x * turnSpeed * Time.deltaTime;
         }
     }
-
-
-
-#if UNITY_EDITOR
-
-    [SerializeField] private bool overrideMoveControls = false;
-
-    [SerializeField] private float mouseSensitivity = 5f;
-    [SerializeField] private bool overrideMouseControls = false;
-
-    private float xRotation, yRotation;
-
-#endif
 }

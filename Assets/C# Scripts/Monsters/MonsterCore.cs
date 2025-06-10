@@ -27,6 +27,7 @@ public class MonsterCore : MonoBehaviour
     [SerializeField] protected float riseY = 0;
 
     [SerializeField] protected float deathDelay = 5;
+    [SerializeField] private LootChest lootChest;
 
     private bool attackCanceled;
 
@@ -69,6 +70,8 @@ public class MonsterCore : MonoBehaviour
 
         StopAllCoroutines();
         Destroy(transform.parent.gameObject, deathDelay);
+
+        Instantiate(lootChest, BoatEngine.Instance.chestPoint);
 
         ZoneLoader.Instance.EndEncounter();
     }

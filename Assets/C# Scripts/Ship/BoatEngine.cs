@@ -24,6 +24,9 @@ public class BoatEngine : MonoBehaviour
     public float swayAngle;
     public bool locked;
 
+    public Transform chestPoint;
+
+
 
     private void OnEnable() => UpdateScheduler.RegisterUpdate(OnUpdate);
     private void OnDisable() => UpdateScheduler.UnregisterUpdate(OnUpdate);
@@ -45,5 +48,10 @@ public class BoatEngine : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+
+        if (health <= 0)
+        {
+            GameRestartHandler.Instance.Lose();
+        }
     }
 }
