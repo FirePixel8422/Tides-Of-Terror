@@ -24,12 +24,6 @@ public class ZoneLoader : MonoBehaviour
         StartCoroutine(EncounterDelay());
     }
 
-
-    public void PrepareNewEncounter()
-    {
-        StartCoroutine(EncounterDelay());
-    }
-
     private IEnumerator EncounterDelay()
     {
         yield return new WaitForSeconds(EzRandom.Range(timeBetweenEncounter));
@@ -49,5 +43,7 @@ public class ZoneLoader : MonoBehaviour
     public void EndEncounter()
     {
         BoatEngine.Instance.locked = false;
+
+        StartCoroutine(EncounterDelay());
     }
 }

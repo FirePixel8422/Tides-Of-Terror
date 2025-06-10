@@ -12,4 +12,6 @@ public struct AttackData
     public int followUpAttackDataId;
 
     public int continuedAttackId;
+
+    public float damage;
 }

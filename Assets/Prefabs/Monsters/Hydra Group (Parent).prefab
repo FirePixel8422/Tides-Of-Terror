@@ -376,7 +376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentAnimation: Armature|Idle animation
   idleAnimation: Armature|Idle animation
-  moveAnimation: Move
+  moveAnimation: .
   attackAnimations:
   - Armature|Open mouth
   - Armature|Close mouth
@@ -470,13 +470,16 @@ MonoBehaviour:
     attackId: 0
     followUpAttackDataId: -1
     continuedAttackId: 1
+    damage: 5
   - weight: 0
     attackPosition: 255
     attackTime: 0
     attackId: 1
     followUpAttackDataId: -1
     continuedAttackId: -1
+    damage: 0
   cAttackId: 0
+  stunnedTime: 2
   attackInterval: 5
   swapSideChance: 50
   sinkSpeed: 15
@@ -617,7 +620,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentAnimation: Armature|Idle animation
   idleAnimation: Armature|Idle animation
-  moveAnimation: RIG-Octopus|RAM_Charge
+  moveAnimation: .
   attackAnimations:
   - Armature|Open mouth
   - Armature|Close mouth
@@ -711,13 +714,16 @@ MonoBehaviour:
     attackId: 0
     followUpAttackDataId: -1
     continuedAttackId: 1
+    damage: 5
   - weight: 0
     attackPosition: 255
     attackTime: 0
     attackId: 1
     followUpAttackDataId: -1
     continuedAttackId: -1
+    damage: 0
   cAttackId: 0
+  stunnedTime: 2
   attackInterval: 5
   swapSideChance: 50
   sinkSpeed: 15
@@ -1235,7 +1241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentAnimation: Armature|Idle animation
   idleAnimation: Armature|Idle animation
-  moveAnimation: Move
+  moveAnimation: .
   attackAnimations:
   - Armature|Open mouth
   - Armature|Close mouth
@@ -1329,13 +1335,16 @@ MonoBehaviour:
     attackId: 0
     followUpAttackDataId: -1
     continuedAttackId: 1
+    damage: 5
   - weight: 0
     attackPosition: 255
     attackTime: 0
     attackId: 1
     followUpAttackDataId: -1
     continuedAttackId: -1
+    damage: 0
   cAttackId: 0
+  stunnedTime: 2
   attackInterval: 5
   swapSideChance: 50
   sinkSpeed: 15

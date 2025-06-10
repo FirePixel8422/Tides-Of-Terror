@@ -40,4 +40,10 @@ public class BoatEngine : MonoBehaviour
 
         transform.position += enginePower * Time.deltaTime * (Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0) * Vector3.forward);
     }
+
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+    }
 }

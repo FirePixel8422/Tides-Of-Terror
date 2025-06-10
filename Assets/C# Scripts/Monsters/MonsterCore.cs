@@ -15,6 +15,7 @@ public class MonsterCore : MonoBehaviour
     [SerializeField] protected AttackData[] attackData;
     [SerializeField] protected int cAttackId;
 
+    [SerializeField] protected float stunnedTime = 2;
     [SerializeField] protected float attackInterval = 5;
     [SerializeField] protected float swapSideChance = 33;
 
@@ -82,31 +83,38 @@ public class MonsterCore : MonoBehaviour
         //and animate it
         StartCoroutine(SwapSideAnimation());
 
+        float elapsed;
+        bool restartLoop;
+
         while (true)
         {
-            //cancel attack
-            if (attackCanceled)
-            {
-                attackCanceled = false;
-            }
-            else
-            {
-                stateMachine.Idle();
-            }
+            restartLoop = false;
 
             Attack();
 
-            yield return new WaitForSeconds(attackData[cAttackId].attackTime);
+            elapsed = 0;
+            while (elapsed < attackData[cAttackId].attackTime)
+            {
+                if (attackCanceled)
+                {
+                    yield return new WaitForSeconds(stunnedTime);
 
-            //cancel attack
-            if (attackCanceled)
-            {
-                attackCanceled = false;
+                    restartLoop = true;
+                    break;
+                }
+
+                yield return null;
+
+                elapsed += Time.deltaTime;
             }
-            else
-            {
-                stateMachine.Idle();
-            }
+
+            //if attack was canceled, restart the attack loop
+            if (restartLoop) continue;
+
+            //otherwise go idle until next attack
+            stateMachine.Idle();
+            //and deal damage
+            BoatEngine.Instance.TakeDamage(attackData[cAttackId].damage);
 
             while (true)
             {
@@ -115,9 +123,30 @@ public class MonsterCore : MonoBehaviour
                 cAttackId = attackData[cAttackId].continuedAttackId;
                 stateMachine.Attack(attackData[cAttackId].attackId);
 
-                yield return new WaitForSeconds(attackData[cAttackId].attackTime);
+                elapsed = 0;
+                while (elapsed < attackData[cAttackId].attackTime)
+                {
+                    if (attackCanceled)
+                    {
+                        yield return new WaitForSeconds(stunnedTime);
+
+                        restartLoop = true;
+                        break;
+                    }
+
+                    yield return null;
+
+                    elapsed += Time.deltaTime;
+                }
+
+                //if attack was canceled, break the attack continue loop
+                if (restartLoop) break;
             }
 
+            //if attack was canceled, restart the attack loop
+            if (restartLoop) continue;
+
+            //if uninterupted, wait a bit until next attack
             yield return new WaitForSeconds(attackInterval);
 
             //if attack has a follow up, do that

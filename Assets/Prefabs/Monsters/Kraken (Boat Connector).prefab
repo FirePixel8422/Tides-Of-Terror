@@ -4654,47 +4654,64 @@ MonoBehaviour:
   frontRot: 0
   attackPosition: 0
   attackData:
-  - weight: 1
+  - weight: 0
     attackPosition: 255
     attackTime: 1
     attackId: 0
     followUpAttackDataId: -1
-  - weight: 1
+    continuedAttackId: 0
+    damage: 0
+  - weight: 0
     attackPosition: 255
     attackTime: 3
     attackId: 1
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 25
   - weight: 1
     attackPosition: 2
     attackTime: 3
     attackId: 2
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 15
   - weight: 1
     attackPosition: 2
     attackTime: 3
     attackId: 3
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 15
   - weight: 1
     attackPosition: 2
     attackTime: 3
     attackId: 4
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 15
   - weight: 1
     attackPosition: 1
     attackTime: 3
     attackId: 5
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 15
   - weight: 1
     attackPosition: 1
     attackTime: 3
     attackId: 6
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 15
   - weight: 1
     attackPosition: 1
     attackTime: 3
     attackId: 7
     followUpAttackDataId: -1
+    continuedAttackId: 0
+    damage: 15
   cAttackId: 0
+  stunnedTime: 2
   attackInterval: 5
   swapSideChance: 33
   sinkSpeed: 20
@@ -4702,3 +4719,4 @@ MonoBehaviour:
   riseDelay: 0.75
   riseSpeed: 30
   riseY: 4.9
+  deathDelay: 5

@@ -19,6 +19,11 @@ public class VolumeHandler : MonoBehaviour
     public static float Volume => Instance.volume;
 
 
+    private void Start()
+    {
+        FindSources();
+    }
+
 
     public void UpdateMasterVolume(float change)
     {
@@ -35,20 +40,20 @@ public class VolumeHandler : MonoBehaviour
         }
     }
 
-
-
-#if UNITY_EDITOR
-
     [ContextMenu("Find Sources")]
     private void FindSources()
     {
         sources = FindObjectsOfType<AudioSource>(true);
+        baseVolumes = new float[sources.Length];
 
         for (int i = 0; i < sources.Length; i++)
         {
             baseVolumes[i] = sources[i].volume;
         }
     }
+
+
+#if UNITY_EDITOR
 
     [ContextMenu("Force Update Sources")]
     private void ForceUpdateSources()

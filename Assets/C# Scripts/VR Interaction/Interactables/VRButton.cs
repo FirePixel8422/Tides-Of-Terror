@@ -16,6 +16,8 @@ public class VRButton : Interactable
 
     public override void Pickup(InteractionController handInteractor)
     {
-        button.onClick.Invoke();
+        base.Pickup();
+
+        button?.onClick.Invoke();
     }
 }
