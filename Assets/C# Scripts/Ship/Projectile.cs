@@ -1,7 +1,6 @@
 using UnityEngine;
 
 
-[RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float damage;
@@ -14,7 +13,8 @@ public class Projectile : MonoBehaviour
 
     private AudioSource audioSource;
     private Renderer meshRenderer;
-    private Collider coll;
+    private Collider[] coll;
+    private Rigidbody rb;
 
 
 
@@ -22,7 +22,8 @@ public class Projectile : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         meshRenderer = GetComponent<Renderer>();
-        coll = GetComponent<Collider>();
+        coll = GetComponents<Collider>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -35,7 +36,11 @@ public class Projectile : MonoBehaviour
         {
             return;
         }
-        coll.enabled = false;
+        for (int i = 0; i < coll.Length; i++)
+        {
+            coll[i].enabled = false;
+        }
+        rb.isKinematic = true;
 
 
         switch (hitType)
@@ -59,6 +64,7 @@ public class Projectile : MonoBehaviour
 
             case ProjectileHitType.Stick:
 
+                transform.tag = "Untagged";
                 transform.SetParent(collision.transform, true);
 
                 break;

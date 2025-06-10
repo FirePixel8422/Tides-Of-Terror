@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 
 
 
-[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
 public class XRMovementController : MonoBehaviour
 {
     [SerializeField] private Transform headTransform;

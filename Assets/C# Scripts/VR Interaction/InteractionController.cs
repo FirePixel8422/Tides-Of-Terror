@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -58,9 +59,9 @@ public class InteractionController : MonoBehaviour
             bodyMovementTransform = transform.root;
         }
 
-        savedLocalThrowVelocity = new Vector3[frameAmount];
-        savedLocalBodyVelocity = new Vector3[frameAmount];
-        savedAngularVelocity = new Vector3[frameAmount];
+        savedLocalThrowVelocity = new float3[frameAmount];
+        savedLocalBodyVelocity = new float3[frameAmount];
+        savedAngularVelocity = new float3[frameAmount];
     }
 
 
@@ -259,15 +260,15 @@ public class InteractionController : MonoBehaviour
         //drop item if it is throwable
         if (heldObject.isThrowable)
         {
-            Vector3 throwVelocity = Vector3.zero;
-            Vector3 bodyVelocity = Vector3.zero;
+            float3 throwVelocity = Vector3.zero;
+            float3 bodyVelocity = Vector3.zero;
             for (int i = 0; i < frameAmount; i++)
             {
                 throwVelocity += savedLocalThrowVelocity[i] / frameAmount;
                 bodyVelocity += savedLocalBodyVelocity[i] / frameAmount;
             }
 
-            Vector3 angularVelocity = Vector3.zero;
+            float3 angularVelocity = Vector3.zero;
             for (int i = 0; i < frameAmount; i++)
             {
                 angularVelocity += savedAngularVelocity[i] / frameAmount;
@@ -301,14 +302,14 @@ public class InteractionController : MonoBehaviour
     #region CalculateHandVelocity
 
     private Transform bodyMovementTransform;
-    private Vector3 prevbodyTransformPos;
+    private float3 prevbodyTransformPos;
 
-    private Vector3 prevTransformPos;
-    private Vector3[] savedLocalThrowVelocity;
-    private Vector3[] savedLocalBodyVelocity;
+    private float3 prevTransformPos;
+    private float3[] savedLocalThrowVelocity;
+    private float3[] savedLocalBodyVelocity;
 
     private Quaternion prevRotation;
-    private Vector3[] savedAngularVelocity;
+    private float3[] savedAngularVelocity;
 
     [Range(1, 32)]
     public int frameAmount;
@@ -318,7 +319,7 @@ public class InteractionController : MonoBehaviour
     private void CalculateHandVelocity()
     {
         //Calculate velocity based on hand movement
-        savedLocalThrowVelocity[frameIndex] = bodyMovementTransform.rotation * (transform.localPosition - prevTransformPos) / Time.deltaTime;
+        savedLocalThrowVelocity[frameIndex] = bodyMovementTransform.rotation * ((float3)transform.localPosition - prevTransformPos) / Time.deltaTime;
 
         prevTransformPos = transform.localPosition;
 
@@ -326,7 +327,7 @@ public class InteractionController : MonoBehaviour
         //Add velocity based on player body
         if (settings.shouldThrowVelAddMovementVel)
         {
-            savedLocalBodyVelocity[frameIndex] += (bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.deltaTime;
+            savedLocalBodyVelocity[frameIndex] += ((float3)bodyMovementTransform.localPosition - prevbodyTransformPos) / Time.deltaTime;
 
             prevbodyTransformPos = bodyMovementTransform.localPosition;
         }

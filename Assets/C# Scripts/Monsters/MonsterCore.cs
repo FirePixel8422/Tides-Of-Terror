@@ -108,6 +108,16 @@ public class MonsterCore : MonoBehaviour
                 stateMachine.Idle();
             }
 
+            while (true)
+            {
+                if (attackData[cAttackId].continuedAttackId == -1) break;
+
+                cAttackId = attackData[cAttackId].continuedAttackId;
+                stateMachine.Attack(attackData[cAttackId].attackId);
+
+                yield return new WaitForSeconds(attackData[cAttackId].attackTime);
+            }
+
             yield return new WaitForSeconds(attackInterval);
 
             //if attack has a follow up, do that

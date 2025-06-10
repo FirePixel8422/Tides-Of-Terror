@@ -5,7 +5,6 @@ using UnityEngine;
 
 
 
-[RequireComponent(typeof(Rigidbody))]
 public class Pickupable : Interactable
 {
     [SerializeField] private InteractionController connectedHandController;
@@ -65,7 +64,7 @@ public class Pickupable : Interactable
         }
 
         connectedHandController = handInteractor;
-
+        rb.freezeRotation = true;
 
         transform.SetParent(handInteractor.HeldItemHolder, false, false);
 
@@ -109,18 +108,24 @@ public class Pickupable : Interactable
         float3 targetVelocity = throwVelocity * throwVelocityMultiplier + moveVelocity;
 
         //only if velocity is MORE then minRequiredVelocityXYZ set rigidBody velocity to targetVelocity
-        if (math.abs(targetVelocity.x) + math.abs(targetVelocity.y) + math.abs(targetVelocity.z) > throwMinRequiredVelocityXYZ)
+        if (MathLogic.AbsoluteSum(targetVelocity) > throwMinRequiredVelocityXYZ)
         {
+            float3 tangentialVelocity = float3.zero;
+
             if (throwUseAngularVelocity)
             {
                 rb.angularVelocity = angularVelocity;
+
+                // Calculate the radius vector from the center of mass to the point
+                float3 radius = transform.position - rb.worldCenterOfMass;
+
+                // Calculate the linear velocity caused by angular velocity
+                tangentialVelocity = Vector3.Cross(angularVelocity, radius);
             }
-
-            // Calculate the radius vector from the center of mass to the point
-            float3 radius = transform.position - rb.worldCenterOfMass;
-
-            // Calculate the linear velocity caused by angular velocity
-            float3 tangentialVelocity = Vector3.Cross(angularVelocity, radius);
+            else
+            {
+                rb.freezeRotation = true;
+            }
 
             rb.velocity = VectorLogic.ClampDirection(targetVelocity + tangentialVelocity, throwVelocityClamp);
         }

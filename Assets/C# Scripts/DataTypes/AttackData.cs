@@ -10,4 +10,6 @@ public struct AttackData
 
     public int attackId;
     public int followUpAttackDataId;
+
+    public int continuedAttackId;
 }
