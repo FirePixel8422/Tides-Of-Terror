@@ -4720,3 +4720,5 @@ MonoBehaviour:
   riseSpeed: 30
   riseY: 4.9
   deathDelay: 5
+  lootChest: {fileID: -8782841923721496023, guid: c1d2f42a43ccfda4bb5dd1fe9652e8ba,
+    type: 3}
