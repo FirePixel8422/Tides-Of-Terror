@@ -21,6 +21,22 @@ public class Hydra : MonsterCore
         breathVVF = GetComponentInChildren<VisualEffect>();
     }
 
+    public int id;
+    public int deathId;
+
+    protected override void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F10))
+        {
+            if (deathId == id)
+            {
+                Death();
+            }
+
+            deathId += 1;
+        }
+    }
+
 
     protected override void Death()
     {
@@ -47,7 +63,9 @@ public class Hydra : MonsterCore
         if (headsAlive == 0)
         {
             //only if all hydras are dead, end encounter and kill parent GameObject
-            Destroy(transform.parent.parent.gameObject);
+            //Destroy(transform.parent.parent.gameObject);
+
+            Instantiate(lootChest, BoatEngine.Instance.chestPoint);
 
             ZoneLoader.Instance.EndEncounter();
         }

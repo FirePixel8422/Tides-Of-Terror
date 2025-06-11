@@ -27,7 +27,7 @@ public class MonsterCore : MonoBehaviour
     [SerializeField] protected float riseY = 0;
 
     [SerializeField] protected float deathDelay = 5;
-    [SerializeField] private LootChest lootChest;
+    [SerializeField] protected LootChest lootChest;
 
     private bool attackCanceled;
 
@@ -61,6 +61,14 @@ public class MonsterCore : MonoBehaviour
         {
             stateMachine.GetHurt();
             attackCanceled = true;
+        }
+    }
+
+    protected virtual void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F10))
+        {
+            Death();
         }
     }
 

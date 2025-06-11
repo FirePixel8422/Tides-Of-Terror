@@ -33,6 +33,7 @@ public class LootChest : Interactable
     }
 
 
+    [ContextMenu("Open Chest")]
     public void OpenChest()
     {
         anim.SetTrigger("Open");
@@ -41,6 +42,8 @@ public class LootChest : Interactable
     public void PlayCoinParticles()
     {
         coinParticles.Play();
+
+        Invoke(nameof(DestroyChest), coinParticles.main.duration);
     }
 
     public void DestroyChest()

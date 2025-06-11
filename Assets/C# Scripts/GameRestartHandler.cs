@@ -51,4 +51,18 @@ public class GameRestartHandler : MonoBehaviour
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.I) && Input.GetKey(KeyCode.N))
+        {
+            Win();
+        }
+
+        if (Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.O) && Input.GetKey(KeyCode.S))
+        {
+            Lose();
+        }
+    }
 }

@@ -488,9 +488,13 @@ MonoBehaviour:
   riseSpeed: 20
   riseY: 0
   deathDelay: 5
+  lootChest: {fileID: -8782841923721496023, guid: 4d5c0ab717df3c5449de55abce32025f,
+    type: 3}
   alive: 1
   firstDeathAttackMultiplier: 0.75
   secondDeathAttackMultiplier: 0.5
+  id: 1
+  deathId: 0
 --- !u!4 &6548566784299318311 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 67841943d2b7a214eaff66c12f3419cc,
@@ -732,9 +736,13 @@ MonoBehaviour:
   riseSpeed: 20
   riseY: 0
   deathDelay: 5
+  lootChest: {fileID: -8782841923721496023, guid: 4d5c0ab717df3c5449de55abce32025f,
+    type: 3}
   alive: 1
   firstDeathAttackMultiplier: 0.75
   secondDeathAttackMultiplier: 0.5
+  id: 0
+  deathId: 0
 --- !u!1001 &7219275174784592803
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1353,6 +1361,10 @@ MonoBehaviour:
   riseSpeed: 20
   riseY: 0
   deathDelay: 5
+  lootChest: {fileID: -8782841923721496023, guid: 4d5c0ab717df3c5449de55abce32025f,
+    type: 3}
   alive: 1
   firstDeathAttackMultiplier: 0.75
   secondDeathAttackMultiplier: 0.5
+  id: 2
+  deathId: 0
