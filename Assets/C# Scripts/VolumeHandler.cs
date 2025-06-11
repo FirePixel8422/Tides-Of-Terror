@@ -36,7 +36,7 @@ public class VolumeHandler : MonoBehaviour
     {
         for (int i = 0; i < sources.Length; i++)
         {
-            sources[i].volume = newVolume01;
+            sources[i].volume = newVolume01 * baseVolumes[i];
         }
     }
 
