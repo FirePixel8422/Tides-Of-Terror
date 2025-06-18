@@ -11,6 +11,8 @@ public class Cannon : Interactable
     [SerializeField] private Animator cannonAnim;
     [SerializeField] private Rigidbody cartRigidBody;
 
+    [SerializeField] private ParticleSystem explosionEffect;
+
     [SerializeField] private AudioSource fuseSource;
     [SerializeField] private AudioSource barrelSource;
 
@@ -36,7 +38,10 @@ public class Cannon : Interactable
     {
         base.Start();
 
-        fuseShader = GetComponent<Renderer>().material;
+        if (TryGetComponent(out Renderer renderer))
+        {
+            fuseShader = renderer.material;
+        }
 
         onCooldown = false;
     }
@@ -53,10 +58,13 @@ public class Cannon : Interactable
 
     private IEnumerator ShootCannonBall()
     {
-        //prime fuse
-        fuseShader.SetInt(IsPrimedBoolId, 1);
-        //play sound for fuse
-        fuseSource.Play();
+        if (fuseShader != null)
+        {
+            //prime fuse
+            fuseShader.SetInt(IsPrimedBoolId, 1);
+            //play sound for fuse
+            fuseSource.Play();
+        }
 
         float elapsed = 0;
         while (elapsed <= fuseIgniteTime)
@@ -64,19 +72,29 @@ public class Cannon : Interactable
             yield return null;
 
             elapsed += Time.deltaTime;
-            //reset fuse
-            fuseShader.SetFloat(TransparencyFloatId, 1 - elapsed / fuseIgniteTime);
+
+            if (fuseShader != null)
+            {
+                //reset fuse
+                fuseShader.SetFloat(TransparencyFloatId, 1 - elapsed / fuseIgniteTime);
+            }
         }
 
-        //disable fuse fire
-        fuseShader.SetInt(IsPrimedBoolId, 0);
-        //play barrel shoot sound
-        barrelSource.Play();
+        if (fuseShader != null)
+        {
+            //disable fuse fire
+            fuseShader?.SetInt(IsPrimedBoolId, 0);
+            //play barrel shoot sound
+            barrelSource?.Play();
+        }
 
         yield return new WaitForSeconds(cannonShootDelay);
 
-        //reset fuse
-        fuseShader.SetFloat(TransparencyFloatId, 1);
+        if (fuseShader != null)
+        {
+            //reset fuse
+            fuseShader?.SetFloat(TransparencyFloatId, 1);
+        }
 
         //set velocity
         if (cartRigidBody != null)
@@ -88,8 +106,13 @@ public class Cannon : Interactable
         //call shoot animation
         cannonAnim.SetTrigger("Shoot");
 
-        Rigidbody cannonBall = Instantiate(cannonBallPrefab, cannonBallSpawnPoint.position, cannonBallSpawnPoint.rotation);
-        cannonBall.velocity = cannonBallSpawnPoint.forward * cannonBallSpeed;
+        if (explosionEffect != null)
+        {
+            explosionEffect.Play();
+        }
+
+        Rigidbody projectile = Instantiate(cannonBallPrefab, cannonBallSpawnPoint.position, cannonBallSpawnPoint.rotation);
+        projectile.velocity = cannonBallSpawnPoint.forward * cannonBallSpeed;
 
         StartCoroutine(Cooldown());
     }
@@ -109,7 +132,7 @@ public class Cannon : Interactable
     {
         base.OnDrawGizmosSelected();
 
-        if (cannonBallSpawnPoint != null) 
+        if (cannonBallSpawnPoint != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(cannonBallSpawnPoint.position, 0.25f);
