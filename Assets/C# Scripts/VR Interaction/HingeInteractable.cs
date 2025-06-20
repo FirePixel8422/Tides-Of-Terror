@@ -140,10 +140,12 @@ public class HingeInteractable : Interactable
     }
 
 
+#if UNITY_EDITOR
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
 
         Gizmos.DrawCube(transform.position, Vector3.one * 0.1f);
     }
+#endif
 }

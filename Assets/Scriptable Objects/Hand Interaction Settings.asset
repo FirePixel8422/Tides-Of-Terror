@@ -18,7 +18,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   interactRayCastRange: 1
-  overlapSphereSize: 0.5
+  overlapSphereSize: 1
   canSwapItemFromHands: 1
   shouldThrowVelAddMovementVel: 1
   pickupsUseOldHandVel: 1
